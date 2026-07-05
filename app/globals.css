@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #fcfcfc;
+  color: #1b1a18;
+}
+
+/* Marquee */
+.marquee-container:hover .animate-marquee,
+.marquee-container:hover .animate-marquee-reverse {
+  animation-play-state: paused;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e7e3dc 50%, transparent);
+}
+
+/* Accent gradient text (terracotta -> lavender, Warp-style warm to cool) */
+.text-gradient-accent {
+  background: linear-gradient(90deg, #d97757, #7c3aed);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Soft cream gradient text */
+.text-gradient-cream {
+  background: linear-gradient(180deg, #1b1a18 0%, #56544e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Accent hairline */
+.hairline-accent {
+  background: linear-gradient(90deg, transparent, rgba(217, 119, 87, 0.45), rgba(124, 58, 237, 0.5), transparent);
+}
+
+/* Faint dotted grid background for ambient depth */
+.bg-grid-faint {
+  background-image: radial-gradient(rgba(20, 18, 14, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Subtle accent glow ring on hover */
+.accent-glow {
+  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.16), 0 18px 50px -22px rgba(124, 58, 237, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d8d3ca; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c4bfb5; }
