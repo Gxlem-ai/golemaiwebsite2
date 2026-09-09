@@ -131,7 +131,7 @@ export function NewWaySection({ reducedMotion }: { reducedMotion: RM }) {
     },
     {
       title: "Judgement remains with the operator",
-      desc: "GOLEM AI presents options together with the data and reasoning behind them. Operators review, adjust and approve. Nothing is executed without sign-off.",
+      desc: "GOLEM presents options together with the data and reasoning behind them. Operators review, adjust and approve. Nothing is executed without sign-off.",
     },
   ];
 
@@ -149,7 +149,7 @@ export function NewWaySection({ reducedMotion }: { reducedMotion: RM }) {
                 <span className="text-gradient-accent">one governed operation.</span>
               </>
             }
-            subtitle="Most small and mid-sized businesses run on disconnected tools, spreadsheets and the memory of a few key people. GOLEM AI consolidates that operating data, prepares the decisions that depend on it, and holds every action for approval."
+            subtitle="Most small and mid-sized businesses run on disconnected tools, spreadsheets and the memory of a few key people. GOLEM consolidates that operating data, prepares the decisions that depend on it, and holds every action for approval."
           />
 
           {/* Before / after */}
@@ -176,7 +176,7 @@ export function NewWaySection({ reducedMotion }: { reducedMotion: RM }) {
             </div>
             <SpotlightCard className="flex-1 rounded-xl border border-accent/25 bg-accent/[0.06] p-4">
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-accent">
-                With GOLEM AI
+                With GOLEM
               </p>
               <div className="space-y-2">
                 {["A single, consolidated operating record", "Forecast-driven ordering and pricing", "Every decision reviewed and logged"].map((t) => (
@@ -355,7 +355,7 @@ export function CapabilitiesSection({ reducedMotion }: { reducedMotion: RM }) {
             One integration. <span className="text-gradient-accent">Four operating functions.</span>
           </>
         }
-        subtitle="GOLEM AI connects to the systems a business already runs, models the business overnight, and provides a single place to operate it. Cloud-hosted by default, with private deployment available."
+        subtitle="GOLEM connects to the systems a business already runs, models the business overnight, and provides a single place to operate it. Cloud-hosted by default, with private deployment available."
       />
 
       <Reveal stagger={0.09} className="mx-auto mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
