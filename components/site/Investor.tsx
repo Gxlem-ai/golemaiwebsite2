@@ -110,7 +110,7 @@ export function ResultsSection({ reducedMotion }: { reducedMotion: RM }) {
             <span className="text-gradient-accent">to a multi-location estate.</span>
           </>
         }
-        subtitle="Across inventory, pricing, labour and daily operations, GOLEM AI works from actual sales and local conditions rather than industry averages."
+        subtitle="Across inventory, pricing, labour and daily operations, GOLEM works from actual sales and local conditions rather than industry averages."
       />
 
       <Reveal stagger={0.08} className="mx-auto mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
