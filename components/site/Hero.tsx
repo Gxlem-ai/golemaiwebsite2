@@ -400,7 +400,7 @@ export function HeroSection({ reducedMotion, scrollTo }: { reducedMotion: RM; sc
           transition={{ duration: 0.6, delay: 0.45 }}
           className="mx-auto mt-6 max-w-2xl text-[16px] leading-relaxed text-w-text sm:text-[18px]"
         >
-          GOLEM AI connects to the point-of-sale and back-office systems a business already runs. It
+          GOLEM connects to the point-of-sale and back-office systems a business already runs. It
           forecasts demand, prepares ordering, pricing and staffing decisions, and executes them once an
           operator approves. One integration covers any POS and every location.
         </motion.p>
