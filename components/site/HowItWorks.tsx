@@ -478,7 +478,7 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
       num: "1",
       title: "Connect",
       headline: "One integration across every system.",
-      desc: "GOLEM AI connects to the point of sale in use, alongside payment, inventory, supplier, accounting and scheduling tools. Operating data is consolidated into a single record that can be queried directly, in plain language.",
+      desc: "GOLEM connects to the point of sale in use, alongside payment, inventory, supplier, accounting and scheduling tools. Operating data is consolidated into a single record that can be queried directly, in plain language.",
       tags: ["POS and payments", "Inventory", "Suppliers", "Accounting", "Scheduling"],
     },
     {
@@ -492,7 +492,7 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
       num: "3",
       title: "Approve",
       headline: "Review the reasoning. Approve the plan.",
-      desc: "The daily plan is ready by 06:00. Operators review, adjust or approve each recommendation. On approval, GOLEM AI executes: prices are updated, orders are sent and every action is written to the audit log.",
+      desc: "The daily plan is ready by 06:00. Operators review, adjust or approve each recommendation. On approval, GOLEM executes: prices are updated, orders are sent and every action is written to the audit log.",
       tags: ["06:00 daily plan", "Single-step approval", "Human-in-the-loop", "Full audit trail"],
     },
   ];
@@ -648,7 +648,7 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
       label: "Connect",
       icon: Cpu,
       heading: "Integrates with existing infrastructure",
-      desc: "GOLEM AI connects to the POS, payment and back-office systems already in place and normalises the data automatically. There is no new hardware and no migration.",
+      desc: "GOLEM connects to the POS, payment and back-office systems already in place and normalises the data automatically. There is no new hardware and no migration.",
       features: [
         "Native connectors for POS, payments, inventory, accounting and scheduling",
         "A single query layer across every connected system",
@@ -672,7 +672,7 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
       label: "Govern",
       icon: ShieldCheck,
       heading: "Nothing executes without approval",
-      desc: "GOLEM AI does not change a price or place an order without explicit sign-off. Control over every decision remains with the operator.",
+      desc: "GOLEM does not change a price or place an order without explicit sign-off. Control over every decision remains with the operator.",
       features: [
         "Every recommendation held for approval",
         "Plain-language reasoning attached to each action",
