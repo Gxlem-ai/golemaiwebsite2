@@ -18,7 +18,7 @@ import {
 } from "@/components/site/Investor";
 import { CTASection, Footer } from "@/components/site/CTA";
 
-export default function MantisAILanding() {
+export default function GolemLanding() {
   const reducedMotion = usePrefersReducedMotion();
 
   const scrollTo = useCallback(
@@ -33,9 +33,9 @@ export default function MantisAILanding() {
     <div className="min-h-screen bg-w-bg text-w-cream">
       <Navbar scrollTo={scrollTo} />
       <main>
-        {/* Sell the product */}
+        {/* Product */}
         <HeroSection reducedMotion={reducedMotion} scrollTo={scrollTo} />
-        <div className="space-y-16 py-6">
+        <div className="space-y-12 pb-4">
           <IntegrationsStrip reducedMotion={reducedMotion} />
           <ProofBand />
         </div>
@@ -45,11 +45,11 @@ export default function MantisAILanding() {
         <LifecycleSection reducedMotion={reducedMotion} />
         <ResultsSection />
 
-        {/* Why it works for SMEs */}
+        {/* Context */}
         <MarketSection reducedMotion={reducedMotion} />
         <PillarsSection reducedMotion={reducedMotion} />
 
-        {/* Convert */}
+        {/* Contact */}
         <CTASection />
       </main>
       <Footer />

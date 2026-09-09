@@ -4,60 +4,60 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Section, SectionHeader, type RM } from "@/components/site/primitives";
 
-/* ═══════════════════════ Results / Impact ═══════════════════════ */
+/* ═══════════════════════ Outcomes ═══════════════════════ */
 
 export function ResultsSection() {
   const metrics = [
-    { label: "Gross margin", value: "+3–5 pts", sub: "Typical lift within 90 days" },
-    { label: "Waste & overstock", value: "Up to 50%", sub: "Less spoilage and dead stock" },
-    { label: "Admin time", value: "60–100 hrs", sub: "Saved per month on forecasting & ordering" },
-    { label: "Forecast accuracy", value: "96–99%", sub: "Daily demand prediction" },
+    { label: "Gross margin", value: "+3–5 pts", sub: "Typical improvement within 90 days" },
+    { label: "Waste and overstock", value: "Up to 50%", sub: "Reduction in spoilage and dead stock" },
+    { label: "Administrative time", value: "60–100 hrs", sub: "Recovered per month across forecasting and ordering" },
+    { label: "Forecast accuracy", value: "96–99%", sub: "Daily demand, measured at line level" },
   ];
   return (
-    <Section id="results" divider>
+    <Section id="outcomes" divider>
       <SectionHeader
-        eyebrow="The impact"
+        eyebrow="Outcomes"
         title={
           <>
-            Real outcomes for real businesses.{" "}
-            <span className="text-gradient-accent">One site or many.</span>
+            Measured outcomes, from a single site{" "}
+            <span className="text-gradient-accent">to a multi-location estate.</span>
           </>
         }
-        subtitle="Across inventory, pricing, labour, and daily operations, GOLEM AI works from your actual sales and local reality, never industry averages."
+        subtitle="Across inventory, pricing, labour and daily operations, GOLEM AI works from actual sales and local conditions rather than industry averages."
       />
 
       <div className="mx-auto mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {metrics.map((m) => (
-          <div key={m.label} className="rounded-xl border border-w-border bg-w-bg-secondary p-7">
+          <div key={m.label} className="rounded-xl border border-w-border bg-w-bg-secondary p-6">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-w-faint">{m.label}</div>
-            <div className="mt-3 text-[34px] font-semibold leading-none text-w-cream">{m.value}</div>
-            <div className="mt-2 text-[14px] text-w-muted">{m.sub}</div>
+            <div className="mt-3 text-[32px] font-semibold leading-none tracking-tight text-w-cream">{m.value}</div>
+            <div className="mt-2 text-[13px] leading-snug text-w-muted">{m.sub}</div>
           </div>
         ))}
       </div>
 
-      <p className="mx-auto mt-8 max-w-2xl text-center text-[12px] text-w-faint">
-        Typical results from early deployments. Your numbers will vary by business.
+      <p className="mx-auto mt-6 max-w-2xl text-center text-[12px] text-w-faint">
+        Figures reflect early deployments and vary by business, sector and data quality.
       </p>
     </Section>
   );
 }
 
-/* ═══════════════════════ Market opportunity & Why now ═══════════════════════ */
+/* ═══════════════════════ Why now ═══════════════════════ */
 
 export function MarketSection({ reducedMotion }: { reducedMotion: RM }) {
   const why = [
     {
-      title: "POS has opened up",
-      desc: "Modern POS and payment platforms now expose clean, real-time APIs. The data has finally become reachable for every small business.",
+      title: "Point-of-sale data is now accessible",
+      desc: "Modern POS and payment platforms expose reliable, real-time APIs. Operating data that was previously locked inside proprietary systems can now be read and acted on.",
     },
     {
-      title: "Agents are ready",
-      desc: "Reliable, tool-using AI agents can now reason over messy operational data and act safely, under human approval, at SME price points.",
+      title: "Agents are dependable enough to act",
+      desc: "Tool-using AI agents can reason over inconsistent operational data and take bounded actions under human approval, at a cost that is viable for smaller businesses.",
     },
     {
-      title: "Margins are under pressure",
-      desc: "Inflation, labour costs, and thinning margins mean SMEs need an edge. GOLEM AI turns their own data into one.",
+      title: "Margins leave no room for error",
+      desc: "Inflation, labour costs and price pressure have compressed margins. The businesses that hold their position will be those that make full use of the data they already generate.",
     },
   ];
 
@@ -73,14 +73,13 @@ export function MarketSection({ reducedMotion }: { reducedMotion: RM }) {
           eyebrow="Why now"
           title={
             <>
-              The timing is <span className="text-gradient-accent">right</span>.
+              Three shifts have made this <span className="text-gradient-accent">practical</span>.
             </>
           }
-          subtitle="Three shifts put real operational AI within reach of every small and medium business."
+          subtitle="Operational AI of this kind was not viable for small and mid-sized businesses until recently. Three developments changed that."
         />
       </motion.div>
 
-      {/* Why now */}
       <div className="mx-auto mt-12 grid gap-4 lg:grid-cols-3">
         {why.map((w, i) => (
           <motion.div
@@ -89,44 +88,43 @@ export function MarketSection({ reducedMotion }: { reducedMotion: RM }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.45, delay: i * 0.08 }}
-            className="rounded-xl border border-w-border bg-w-bg-secondary p-7"
+            className="rounded-xl border border-w-border bg-w-bg-secondary p-6"
           >
             <h3 className="text-[16px] font-semibold text-w-cream">{w.title}</h3>
             <p className="mt-2 text-[14px] leading-relaxed text-w-text">{w.desc}</p>
           </motion.div>
         ))}
       </div>
-
     </Section>
   );
 }
 
-/* ═══════════════════════ Innovative · Viable · Scalable ═══════════════════════ */
+/* ═══════════════════════ Principles ═══════════════════════ */
 
 export function PillarsSection({ reducedMotion }: { reducedMotion: RM }) {
   const pillars = [
     {
-      title: "An original approach",
+      title: "A different architecture",
       points: [
-        "An agentic operating layer on top of the POS, not another dashboard",
-        "Privacy-preserving intelligence that sharpens with every business",
-        "Human-in-the-loop governance baked in, not bolted on",
+        "An operating layer above the POS, rather than another reporting dashboard",
+        "Models that improve with each deployment while customer data stays isolated",
+        "Human approval designed into every workflow, not added afterwards",
       ],
     },
     {
-      title: "Grounded in reality",
+      title: "Grounded in existing operations",
       points: [
-        "Connects to tools businesses already own, with no new hardware",
-        "Pays for itself: margin protected and dozens of admin hours saved each month",
-        "Cloud by default, with optional private on-prem for sensitive operators",
+        "Works with the systems businesses already own; no new hardware required",
+        "Pays back through protected margin and recovered management time",
+        "Cloud-hosted by default, with private deployment for regulated or sensitive operations",
       ],
     },
     {
-      title: "Works at any size",
+      title: "Designed to scale",
       points: [
-        "One integration layer extends to any POS, any sector, any region",
-        "Runs a single site or many locations from one place",
-        "Grows with you, from first till to nationwide rollout",
+        "One integration layer that extends to any POS, sector or region",
+        "Operates a single site or a multi-location estate from one place",
+        "Supports growth from the first location to a national footprint",
       ],
     },
   ];
@@ -140,17 +138,17 @@ export function PillarsSection({ reducedMotion }: { reducedMotion: RM }) {
         transition={{ duration: 0.5 }}
       >
         <SectionHeader
-          eyebrow="The foundations"
+          eyebrow="Principles"
           title={
             <>
-              Built to <span className="text-gradient-accent">last</span>.
+              Built to be <span className="text-gradient-accent">trusted</span>.
             </>
           }
-          subtitle="A few principles we don't compromise on."
+          subtitle="The commitments that shape how the platform is designed, deployed and operated."
         />
       </motion.div>
 
-      <div className="mx-auto mt-14 grid gap-4 lg:grid-cols-3">
+      <div className="mx-auto mt-12 grid gap-4 lg:grid-cols-3">
         {pillars.map((p, i) => (
           <motion.div
             key={p.title}
@@ -158,10 +156,10 @@ export function PillarsSection({ reducedMotion }: { reducedMotion: RM }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.45, delay: i * 0.08 }}
-            className="relative flex flex-col overflow-hidden rounded-2xl border border-w-border bg-w-bg-secondary p-8"
+            className="relative flex flex-col overflow-hidden rounded-2xl border border-w-border bg-w-bg-secondary p-7"
           >
             <div className="hairline-accent absolute inset-x-0 top-0 h-px" />
-            <h3 className="text-[18px] font-semibold text-w-cream">{p.title}</h3>
+            <h3 className="text-[17px] font-semibold text-w-cream">{p.title}</h3>
             <ul className="mt-4 space-y-3">
               {p.points.map((pt) => (
                 <li key={pt} className="flex items-start gap-3 text-[14px] leading-relaxed text-w-text">

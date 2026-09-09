@@ -18,7 +18,7 @@ function IllustrationConnect({ rm }: { rm: boolean }) {
   const right = [
     { label: "Suppliers", x: 570, y: 40 },
     { label: "Accounting", x: 570, y: 120 },
-    { label: "Comms", x: 570, y: 200 },
+    { label: "Scheduling", x: 570, y: 200 },
   ];
   const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } } };
   const nodeV = { hidden: { opacity: 0, scale: 0.6 }, visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 180, damping: 16 } } };
@@ -94,7 +94,7 @@ function IllustrationConnect({ rm }: { rm: boolean }) {
 /* ═══════════════════════ Illustration: Learn ═══════════════════════ */
 
 function IllustrationLearn({ rm }: { rm: boolean }) {
-  const sources = ["Square", "Eventbrite", "Google Trends"];
+  const sources = ["POS sales", "Event calendar", "Search trends"];
   const sCY = [50, 120, 190];
   const SX = 90, MX = 320, MY = 120;
   const bars = [{ label: "Accuracy", pct: 87 }, { label: "Coverage", pct: 94 }, { label: "Recency", pct: 98 }];
@@ -116,7 +116,7 @@ function IllustrationLearn({ rm }: { rm: boolean }) {
           <circle key={`d-${i}-${j}`} cx={40 + i * 40} cy={20 + j * 40} r="0.8" fill="rgba(31,29,26,0.06)" />
         ))
       )}
-      <text x={SX} y="14" textAnchor="middle" fill="rgba(31,29,26,0.25)" fontSize="8" fontFamily="ui-monospace,monospace">YOUR DATA STAYS YOURS</text>
+      <text x={SX} y="14" textAnchor="middle" fill="rgba(31,29,26,0.25)" fontSize="8" fontFamily="ui-monospace,monospace">DATA ISOLATED PER BUSINESS</text>
       {sources.map((s, i) => (
         <motion.g key={s} variants={itemV}>
           <rect x={SX - 55} y={sCY[i] - 14} width={110} height={28} rx="6" fill="rgba(31,29,26,0.07)" stroke="rgba(31,29,26,0.22)" strokeWidth="1" />
@@ -158,17 +158,17 @@ function IllustrationLearn({ rm }: { rm: boolean }) {
 
 function IllustrationAgents({ rm }: { rm: boolean }) {
   const agents = [
-    { label: "Ordering", status: "EXEC", task: "Reorder draft" },
-    { label: "Pricing", status: "EXEC", task: "Price tests" },
-    { label: "Labour", status: "IDLE", task: "Shift plan" },
+    { label: "Ordering", status: "ACTIVE", task: "Reorder draft" },
+    { label: "Pricing", status: "ACTIVE", task: "Price tests" },
+    { label: "Labour", status: "QUEUED", task: "Shift plan" },
   ];
   const aCY = [50, 120, 190];
   const LX = 400, LY = 16;
   const entries = [
     { action: "Low stock flagged", time: "05:58:02", done: true },
-    { action: "Reorder → approved", time: "06:00:11", done: true },
+    { action: "Reorder approved", time: "06:00:11", done: true },
     { action: "Price test queued", time: "06:00:18", done: true },
-    { action: "Daily plan compiling…", time: "06:00:24", done: false },
+    { action: "Daily plan in progress", time: "06:00:24", done: false },
   ];
   const container = { hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } } };
   const leftV = { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 160, damping: 16 } } };
@@ -184,18 +184,18 @@ function IllustrationAgents({ rm }: { rm: boolean }) {
       )}
       {agents.map((a, i) => (
         <motion.g key={a.label} variants={leftV}>
-          <rect x="20" y={aCY[i] - 28} width="200" height={56} rx="8" fill="rgba(31,29,26,0.06)" stroke={a.status === "EXEC" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.10)"} strokeWidth="1" />
-          <motion.circle cx="40" cy={aCY[i] - 6} r="5" fill={a.status === "EXEC" ? "#7c3aed" : "rgba(31,29,26,0.2)"} animate={a.status === "EXEC" && !rm ? { opacity: [0.4, 1, 0.4] } : {}} transition={{ duration: 1.5, repeat: Infinity }} />
+          <rect x="20" y={aCY[i] - 28} width="200" height={56} rx="8" fill="rgba(31,29,26,0.06)" stroke={a.status === "ACTIVE" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.10)"} strokeWidth="1" />
+          <motion.circle cx="40" cy={aCY[i] - 6} r="5" fill={a.status === "ACTIVE" ? "#7c3aed" : "rgba(31,29,26,0.2)"} animate={a.status === "ACTIVE" && !rm ? { opacity: [0.4, 1, 0.4] } : {}} transition={{ duration: 1.5, repeat: Infinity }} />
           <text x="54" y={aCY[i] - 6} dominantBaseline="middle" fill="rgba(31,29,26,0.88)" fontSize="11.5" fontFamily="ui-sans-serif,sans-serif" fontWeight="600">{a.label}</text>
-          <rect x="170" y={aCY[i] - 16} width="40" height="16" rx="4" fill={a.status === "EXEC" ? "rgba(124,58,237,0.12)" : "rgba(31,29,26,0.03)"} stroke={a.status === "EXEC" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.1)"} strokeWidth="1" />
-          <text x="190" y={aCY[i] - 8} textAnchor="middle" dominantBaseline="middle" fill={a.status === "EXEC" ? "rgba(124,58,237,0.9)" : "rgba(31,29,26,0.25)"} fontSize="8" fontFamily="ui-monospace,monospace">{a.status}</text>
+          <rect x="170" y={aCY[i] - 16} width="40" height="16" rx="4" fill={a.status === "ACTIVE" ? "rgba(124,58,237,0.12)" : "rgba(31,29,26,0.03)"} stroke={a.status === "ACTIVE" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.1)"} strokeWidth="1" />
+          <text x="190" y={aCY[i] - 8} textAnchor="middle" dominantBaseline="middle" fill={a.status === "ACTIVE" ? "rgba(124,58,237,0.9)" : "rgba(31,29,26,0.25)"} fontSize="8" fontFamily="ui-monospace,monospace">{a.status}</text>
           <text x="40" y={aCY[i] + 14} dominantBaseline="middle" fill="rgba(31,29,26,0.35)" fontSize="9" fontFamily="ui-monospace,monospace">{a.task}</text>
         </motion.g>
       ))}
       {aCY.map((cy, i) => (
         <motion.g key={`cl-${i}`} variants={lineV}>
-          <motion.line x1={220} y1={cy} x2={LX - 2} y2={LY + 105} stroke={agents[i].status === "EXEC" ? "rgba(124,58,237,0.25)" : "rgba(31,29,26,0.06)"} strokeWidth="1" />
-          {agents[i].status === "EXEC" && (
+          <motion.line x1={220} y1={cy} x2={LX - 2} y2={LY + 105} stroke={agents[i].status === "ACTIVE" ? "rgba(124,58,237,0.25)" : "rgba(31,29,26,0.06)"} strokeWidth="1" />
+          {agents[i].status === "ACTIVE" && (
             <motion.circle r="2" fill="#7c3aed" animate={rm ? {} : { cx: [220, LX - 2], cy: [cy, LY + 105], opacity: [0, 0.7, 0] }} transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }} />
           )}
         </motion.g>
@@ -231,24 +231,24 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
   const steps = [
     {
       num: "1",
-      title: "Connect your POS",
-      headline: "One layer. All your systems.",
-      desc: "GOLEM AI connects to the POS you already run, plus payments, inventory, suppliers, accounting, and spreadsheets. Everything lands in one place, so you stop hunting across apps and just ask questions in plain English.",
-      tags: ["POS & Payments", "Inventory", "Suppliers", "Accounting", "Spreadsheets"],
+      title: "Connect",
+      headline: "One integration across every system.",
+      desc: "GOLEM AI connects to the point of sale in use, alongside payment, inventory, supplier, accounting and scheduling tools. Operating data is consolidated into a single record that can be queried directly, in plain language.",
+      tags: ["POS and payments", "Inventory", "Suppliers", "Accounting", "Scheduling"],
     },
     {
       num: "2",
-      title: "Simulate overnight",
-      headline: "Map reality. Simulate tomorrow.",
-      desc: "Every night, GOLEM AI runs thousands of scenarios using signals from the tools you trust: your POS sales, Eventbrite events, and Google Trends demand. It prepares recommendations for ordering, pricing, staffing, and margin, ready for review.",
-      tags: ["Square sales", "Eventbrite events", "Google Trends"],
+      title: "Model",
+      headline: "Tomorrow's trading, modelled tonight.",
+      desc: "Each night the platform evaluates thousands of demand scenarios using sales history, local events, weather and search trends. It produces recommendations for ordering, pricing, staffing and margin, with the supporting data attached.",
+      tags: ["Sales history", "Local events", "Weather", "Search trends"],
     },
     {
       num: "3",
-      title: "Review & execute",
-      headline: "Review the logic. Approve. Done.",
-      desc: "By 6 AM your daily plan is waiting in one place. Review, tweak, or approve with one click. GOLEM AI handles execution: updating prices, sending orders, logging everything. You stay in the room; the busywork doesn't.",
-      tags: ["6 AM Daily Brief", "One-Click Approve", "Human-in-the-loop", "Full Audit Trail"],
+      title: "Approve",
+      headline: "Review the reasoning. Approve the plan.",
+      desc: "The daily plan is ready by 06:00. Operators review, adjust or approve each recommendation. On approval, GOLEM AI executes: prices are updated, orders are sent and every action is written to the audit log.",
+      tags: ["06:00 daily plan", "Single-step approval", "Human-in-the-loop", "Full audit trail"],
     },
   ];
 
@@ -275,11 +275,11 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
     <Section id="how" divider>
       <SectionHeader
         eyebrow="How it works"
-        title="Set it up. Let it learn. Approve the plan."
-        subtitle="Connect once, then just scroll. The plan builds itself, step by step."
+        title="From integration to execution in three stages."
+        subtitle="A single integration, an overnight modelling cycle, and a daily plan that waits for approval."
       />
 
-      <div className="mx-auto mt-16 grid gap-x-14 lg:grid-cols-2">
+      <div className="mx-auto mt-12 grid gap-x-14 lg:grid-cols-2">
         {/* Left: scroll-driven step blocks */}
         <div>
           {steps.map((s, i) => {
@@ -291,7 +291,7 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                 ref={(el) => {
                   blockRefs.current[i] = el;
                 }}
-                className="flex min-h-[60vh] flex-col justify-center py-8"
+                className="flex flex-col justify-center py-6 lg:min-h-[36vh] lg:py-10"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -328,7 +328,7 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                   ))}
                 </div>
                 {/* Inline illustration (mobile) */}
-                <div className="mt-8 aspect-[16/9] w-full overflow-hidden rounded-xl border border-w-border bg-w-card lg:hidden">
+                <div className="mt-6 aspect-[16/9] w-full overflow-hidden rounded-xl border border-w-border bg-w-card lg:hidden">
                   <StepIllustration step={i} reducedMotion={reducedMotion} />
                 </div>
               </div>
@@ -382,50 +382,56 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
     {
       label: "Connect",
       icon: Cpu,
-      heading: "Connects to what you have",
-      desc: "GOLEM AI plugs straight into your existing POS, payments, and back-office tools, then organises the messy data automatically. No new hardware, no rip-and-replace.",
+      heading: "Integrates with existing infrastructure",
+      desc: "GOLEM AI connects to the POS, payment and back-office systems already in place and normalises the data automatically. There is no new hardware and no migration.",
       features: [
-        "Connects to your POS, payments, inventory, accounting, and rota tools",
-        "One place to ask questions across every system, not five dashboards",
-        "Cloud by default, with optional private on-prem deployment",
-        "You stay in control, with no black boxes",
+        "Native connectors for POS, payments, inventory, accounting and scheduling",
+        "A single query layer across every connected system",
+        "Cloud-hosted by default, with private deployment available",
+        "Full visibility into what the platform is doing and why",
       ],
     },
     {
-      label: "Predict",
+      label: "Forecast",
       icon: Brain,
-      heading: "Predicts tomorrow, tonight",
-      desc: "While you sleep, GOLEM AI runs thousands of what-if scenarios using local weather, events, and your own customer patterns to build the best plan for tomorrow.",
+      heading: "Forecasts built on the business's own data",
+      desc: "The platform models thousands of scenarios overnight, combining sales history with weather, local events and seasonal patterns to produce the next day's plan.",
       features: [
-        "Tests thousands of demand scenarios every night",
-        "Factors in weather, local events, and seasonal trends",
-        "Works out exactly what to reorder and what to discount",
-        "Delivers your daily plan by 6 AM",
+        "Thousands of demand scenarios evaluated every night",
+        "Weather, local events and seasonality factored in",
+        "Specific reorder quantities and price adjustments, not generic alerts",
+        "Daily plan delivered by 06:00",
       ],
     },
     {
-      label: "Control",
+      label: "Govern",
       icon: ShieldCheck,
-      heading: "You approve everything",
-      desc: "GOLEM AI never changes a price or places an order without your clear, one-click approval. You stay in complete control of every decision.",
+      heading: "Nothing executes without approval",
+      desc: "GOLEM AI does not change a price or place an order without explicit sign-off. Control over every decision remains with the operator.",
       features: [
-        "Every recommendation waits for your approval",
-        "Plain-English reasoning behind each suggestion",
-        "A full record of every decision for your books",
-        "One-click approve, or adjust before anything happens",
+        "Every recommendation held for approval",
+        "Plain-language reasoning attached to each action",
+        "A permanent record of every decision for audit and accounting",
+        "Approve in one step, or adjust before anything is executed",
       ],
     },
   ];
 
   return (
-    <Section>
-      <SectionHeader eyebrow="What's under the hood" title="Serious technology. Simple for you." />
+    <Section contentClassName="pt-4 sm:pt-6">
+      <SectionHeader
+        eyebrow="Architecture"
+        title="Rigorous underneath. Straightforward to operate."
+        subtitle="Three components, each designed so that automation stays accountable to the people running the business."
+      />
 
       {/* Tabs */}
-      <div className="mx-auto mt-10 flex max-w-md items-center justify-center gap-1 rounded-lg border border-w-border bg-w-bg-secondary p-1">
+      <div className="mx-auto mt-8 flex max-w-md items-center justify-center gap-1 rounded-lg border border-w-border bg-w-bg-secondary p-1" role="tablist" aria-label="Architecture components">
         {tabs.map((tab, i) => (
           <button
             key={tab.label}
+            role="tab"
+            aria-selected={i === activeTab}
             onClick={() => setActiveTab(i)}
             className={cx(
               "flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-[13px] font-medium transition-all duration-200",
@@ -445,10 +451,10 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.25 }}
-          className="mx-auto mt-8 max-w-5xl"
+          className="mx-auto mt-6 max-w-5xl"
         >
           <div className="rounded-xl border border-w-border bg-w-bg-secondary">
-            <div className="grid gap-8 p-8 sm:p-10 lg:grid-cols-2 lg:gap-10">
+            <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-2 lg:gap-10">
               <div>
                 <h3 className="text-[22px] font-semibold text-w-cream">{tabs[activeTab].heading}</h3>
                 <p className="mt-2 text-[14px] leading-relaxed text-w-text">{tabs[activeTab].desc}</p>
