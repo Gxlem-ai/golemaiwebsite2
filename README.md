@@ -17,15 +17,18 @@ npm run lint
 npm run build && npm run start
 ```
 
-## Demo request form
+## Deployment
 
-The form in the contact section posts to `app/api/demo/route.ts`. Set the following variable in the deployment environment to forward submissions:
+The site deploys on Vercel. Production is served from the `main` branch; other branches receive preview deployments.
 
 | Variable | Purpose |
 | --- | --- |
-| `DEMO_REQUEST_WEBHOOK_URL` | HTTPS endpoint that receives each submission as a JSON `POST` (CRM intake, Zapier/Make hook, Slack incoming webhook, etc.). |
+| `NEXT_PUBLIC_SITE_URL` | Optional. Canonical origin for Open Graph and canonical URLs (for example `https://www.example.com` once a custom domain is attached). When unset, the Vercel production domain is used automatically. |
+| `DEMO_REQUEST_WEBHOOK_URL` | HTTPS endpoint that receives each demo request as a JSON `POST` (CRM intake, Zapier/Make hook, Slack incoming webhook, etc.). |
 
-Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When the variable is not set, submissions are accepted and written to the server log rather than forwarded.
+## Demo request form
+
+The form in the contact section posts to `app/api/demo/route.ts`, which validates the submission and forwards it to `DEMO_REQUEST_WEBHOOK_URL`. Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When the variable is not set, submissions are accepted and written to the server log rather than forwarded.
 
 ## Structure
 
