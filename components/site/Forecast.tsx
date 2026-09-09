@@ -222,7 +222,7 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
         viewBox={`0 0 ${g.vw} ${g.vh}`}
         className="h-auto w-full touch-none"
         role="img"
-        aria-label={`Demand forecast for the coming week. The GOLEM AI forecast peaks at ${Math.round(target[peakIndex])} covers on ${DAYS[peakIndex]}, against a baseline of ${BASELINE[peakIndex]}.`}
+        aria-label={`Demand forecast for the coming week. The GOLEM forecast peaks at ${Math.round(target[peakIndex])} covers on ${DAYS[peakIndex]}, against a baseline of ${BASELINE[peakIndex]}.`}
         onMouseMove={onMove}
         onMouseLeave={() => setHover(null)}
       >
