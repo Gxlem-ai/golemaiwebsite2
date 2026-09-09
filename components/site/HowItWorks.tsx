@@ -1,217 +1,462 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Cpu, ShieldCheck } from "lucide-react";
-import { cx, Section, SectionHeader, type RM } from "@/components/site/primitives";
+import {
+  Reveal,
+  Section,
+  SectionHeader,
+  cx,
+  usePrefersReducedMotion,
+  type RM,
+} from "@/components/site/primitives";
+
+const INK = "rgba(27,26,24,";
+const ACCENT = "#7c3aed";
 
 /* ═══════════════════════ Illustration: Connect ═══════════════════════ */
 
 function IllustrationConnect({ rm }: { rm: boolean }) {
-  const CX = 320, CY = 120;
-  const NW = 72, NH = 28, HR = 44;
+  const CX = 320;
+  const CY = 120;
+  const NW = 76;
+  const NH = 28;
+  const HR = 44;
   const left = [
-    { label: "POS", x: 70, y: 40 },
-    { label: "Payments", x: 70, y: 120 },
-    { label: "Inventory", x: 70, y: 200 },
+    { label: "POS", y: 40 },
+    { label: "Payments", y: 120 },
+    { label: "Inventory", y: 200 },
   ];
   const right = [
-    { label: "Suppliers", x: 570, y: 40 },
-    { label: "Accounting", x: 570, y: 120 },
-    { label: "Scheduling", x: 570, y: 200 },
+    { label: "Suppliers", y: 40 },
+    { label: "Accounting", y: 120 },
+    { label: "Scheduling", y: 200 },
   ];
-  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } } };
-  const nodeV = { hidden: { opacity: 0, scale: 0.6 }, visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 180, damping: 16 } } };
-  const pathV = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 1, ease: "easeOut" } } };
 
-  const curvePath = (ex: number, ey: number, hx: number, hy: number) => {
+  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.12 } } };
+  const nodeV = {
+    hidden: { opacity: 0, scale: 0.7 },
+    visible: { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 190, damping: 17 } },
+  };
+  const pathV = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: { pathLength: 1, opacity: 1, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as const } },
+  };
+
+  const curve = (ex: number, ey: number, hx: number, hy: number) => {
     const mx = (ex + hx) / 2;
     return `M${ex},${ey} C${mx},${ey} ${mx},${hy} ${hx},${hy}`;
   };
 
-  const sides = [
-    ...left.map((n) => ({ ...n, edgeX: n.x + NW / 2, hubX: CX - HR })),
-    ...right.map((n) => ({ ...n, edgeX: n.x - NW / 2, hubX: CX + HR })),
+  const edges = [
+    ...left.map((n) => ({ ...n, x: 70, edgeX: 70 + NW / 2, hubX: CX - HR })),
+    ...right.map((n) => ({ ...n, x: 570, edgeX: 570 - NW / 2, hubX: CX + HR })),
   ];
 
   return (
-    <motion.svg viewBox="0 0 640 240" fill="none" className="h-full w-full" variants={container} initial={rm ? "visible" : "hidden"} animate="visible">
+    <motion.svg
+      viewBox="0 0 640 240"
+      fill="none"
+      className="h-full w-full"
+      variants={container}
+      initial={rm ? "visible" : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true }}
+      aria-hidden="true"
+    >
       <defs>
         <radialGradient id="cn-rg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(124,58,237,0.16)" />
+          <stop offset="0%" stopColor="rgba(124,58,237,0.18)" />
           <stop offset="100%" stopColor="rgba(124,58,237,0)" />
         </radialGradient>
       </defs>
-      {Array.from({ length: 16 }).map((_, i) =>
-        Array.from({ length: 6 }).map((_, j) => (
-          <circle key={`d-${i}-${j}`} cx={20 + i * 40} cy={20 + j * 40} r="0.7" fill="rgba(31,29,26,0.05)" />
-        ))
-      )}
-      <ellipse cx={CX} cy={CY} rx="100" ry="85" fill="url(#cn-rg)" />
-      {sides.map((n, i) => {
-        const d = curvePath(n.edgeX, n.y, n.hubX, CY);
-        return <motion.path key={`p-${i}`} d={d} stroke="rgba(31,29,26,0.14)" strokeWidth="1" fill="none" variants={pathV} />;
-      })}
-      {sides.map((n, i) => {
-        const d = curvePath(n.edgeX, n.y, n.hubX, CY);
+
+      <ellipse cx={CX} cy={CY} rx="104" ry="88" fill="url(#cn-rg)" />
+
+      {edges.map((n, i) => {
+        const d = curve(n.edgeX, n.y, n.hubX, CY);
         const id = `cn-mp-${i}`;
         return (
-          <g key={`tp-${i}`}>
+          <g key={`edge-${i}`}>
+            <motion.path d={d} stroke={`${INK}0.14)`} strokeWidth="1" fill="none" variants={pathV} />
             <path id={id} d={d} fill="none" stroke="none" />
             {!rm && (
-              <circle r="2" fill="#7c3aed" opacity="0">
-                <animateMotion dur={`${4.5 + i * 0.4}s`} repeatCount="indefinite" begin={`${i * 0.6}s`}>
+              <circle r="2.2" fill={ACCENT}>
+                <animateMotion dur={`${4.2 + i * 0.35}s`} repeatCount="indefinite" begin={`${i * 0.55}s`}>
                   <mpath href={`#${id}`} />
                 </animateMotion>
-                <animate attributeName="opacity" values="0;0.85;0.85;0" keyTimes="0;0.15;0.85;1" dur={`${4.5 + i * 0.4}s`} repeatCount="indefinite" begin={`${i * 0.6}s`} />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.9;0.9;0"
+                  keyTimes="0;0.15;0.85;1"
+                  dur={`${4.2 + i * 0.35}s`}
+                  repeatCount="indefinite"
+                  begin={`${i * 0.55}s`}
+                />
               </circle>
             )}
           </g>
         );
       })}
-      <motion.circle cx={CX} cy={CY} r="52" fill="none" stroke="rgba(31,29,26,0.08)" strokeWidth="0.5" strokeDasharray="3 5" animate={rm ? {} : { rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: `${CX}px ${CY}px` }} />
-      <motion.circle cx={CX} cy={CY} r={HR} fill="rgba(124,58,237,0.06)" stroke="rgba(124,58,237,0.35)" strokeWidth="1" variants={pathV} />
-      <motion.circle cx={CX} cy={CY} r="30" fill="rgba(124,58,237,0.08)" stroke="rgba(124,58,237,0.45)" strokeWidth="1.5" animate={rm ? {} : { opacity: [0.7, 1, 0.7] }} transition={{ duration: 3, repeat: Infinity }} />
-      <text x={CX} y={CY + 1} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.95)" fontSize="12" fontFamily="ui-sans-serif,sans-serif" fontWeight="700">GOLEM</text>
-      {left.map((n, i) => (
-        <motion.g key={`nl-${i}`} variants={nodeV}>
-          <rect x={n.x - NW / 2} y={n.y - NH / 2} width={NW} height={NH} rx="6" fill="rgba(31,29,26,0.07)" stroke="rgba(31,29,26,0.22)" strokeWidth="1" />
-          <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.65)" fontSize="10" fontFamily="ui-monospace,monospace">{n.label}</text>
+
+      <motion.circle
+        cx={CX}
+        cy={CY}
+        r="54"
+        fill="none"
+        stroke={`${INK}0.09)`}
+        strokeWidth="0.75"
+        strokeDasharray="3 6"
+        animate={rm ? {} : { rotate: 360 }}
+        transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+        style={{ transformOrigin: `${CX}px ${CY}px` }}
+      />
+      <motion.circle cx={CX} cy={CY} r={HR} fill="rgba(124,58,237,0.07)" stroke="rgba(124,58,237,0.38)" strokeWidth="1" variants={pathV} />
+      <motion.circle
+        cx={CX}
+        cy={CY}
+        r="30"
+        fill="rgba(124,58,237,0.10)"
+        stroke="rgba(124,58,237,0.5)"
+        strokeWidth="1.5"
+        animate={rm ? {} : { opacity: [0.65, 1, 0.65] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <text x={CX} y={CY + 1} textAnchor="middle" dominantBaseline="middle" fill={`${INK}0.95)`} fontSize="12" fontWeight="700">
+        GOLEM
+      </text>
+
+      {edges.map((n, i) => (
+        <motion.g key={`node-${i}`} variants={nodeV}>
+          <rect x={n.x - NW / 2} y={n.y - NH / 2} width={NW} height={NH} rx="7" fill={`${INK}0.05)`} stroke={`${INK}0.2)`} strokeWidth="1" />
+          <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="middle" fill={`${INK}0.62)`} fontSize="10" fontFamily="ui-monospace,monospace">
+            {n.label}
+          </text>
         </motion.g>
       ))}
-      {right.map((n, i) => (
-        <motion.g key={`nr-${i}`} variants={nodeV}>
-          <rect x={n.x - NW / 2} y={n.y - NH / 2} width={NW} height={NH} rx="6" fill="rgba(31,29,26,0.07)" stroke="rgba(31,29,26,0.22)" strokeWidth="1" />
-          <text x={n.x} y={n.y} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.65)" fontSize="10" fontFamily="ui-monospace,monospace">{n.label}</text>
-        </motion.g>
-      ))}
-      <motion.text x={175} y={18} textAnchor="middle" variants={nodeV} fill="rgba(31,29,26,0.18)" fontSize="7.5" fontFamily="ui-monospace,monospace">ingest →</motion.text>
-      <motion.text x={465} y={18} textAnchor="middle" variants={nodeV} fill="rgba(31,29,26,0.18)" fontSize="7.5" fontFamily="ui-monospace,monospace">← ingest</motion.text>
     </motion.svg>
   );
 }
 
-/* ═══════════════════════ Illustration: Learn ═══════════════════════ */
+/* ═══════════════════════ Illustration: Model ═══════════════════════ */
 
-function IllustrationLearn({ rm }: { rm: boolean }) {
-  const sources = ["POS sales", "Event calendar", "Search trends"];
-  const sCY = [50, 120, 190];
-  const SX = 90, MX = 320, MY = 120;
-  const bars = [{ label: "Accuracy", pct: 87 }, { label: "Coverage", pct: 94 }, { label: "Recency", pct: 98 }];
-  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } } };
-  const itemV = { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 150, damping: 16 } } };
-  const rightV = { hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 150, damping: 16 } } };
-  const lineV = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.7 } } };
+/** Deterministic PRNG so the scenario fan renders identically on server and client. */
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * The overnight simulation drawn as a fan of candidate scenarios converging on
+ * one forecast, with the endpoint distribution binned along the right edge.
+ */
+function IllustrationModel({ rm }: { rm: boolean }) {
+  const { paths, bins, forecastPath } = useMemo(() => {
+    const rand = mulberry32(20260909);
+    const originX = 92;
+    const originY = 120;
+    const endX = 468;
+    const count = 46;
+
+    const ends: number[] = [];
+    const paths: string[] = [];
+
+    for (let i = 0; i < count; i++) {
+      // Sum of three uniforms approximates a normal, so the fan clusters.
+      const g = (rand() + rand() + rand()) / 3 - 0.5;
+      const endY = originY + g * 190;
+      ends.push(endY);
+      const midY = originY + g * 70;
+      paths.push(`M${originX},${originY} C${originX + 130},${originY} ${endX - 150},${midY} ${endX},${endY.toFixed(1)}`);
+    }
+
+    // Bin the endpoints into a vertical histogram.
+    const BINS = 11;
+    const top = 20;
+    const bottom = 220;
+    const counts = new Array(BINS).fill(0);
+    for (const y of ends) {
+      const t = Math.min(0.999, Math.max(0, (y - top) / (bottom - top)));
+      counts[Math.floor(t * BINS)] += 1;
+    }
+    const maxCount = Math.max(...counts);
+    const bins = counts.map((c, i) => ({
+      y: top + (i / BINS) * (bottom - top),
+      h: (bottom - top) / BINS - 2,
+      w: (c / maxCount) * 74,
+      peak: c === maxCount,
+    }));
+
+    const forecastPath = `M${originX},${originY} C${originX + 130},${originY} ${endX - 150},${originY + 6} ${endX},${originY + 10}`;
+
+    return { paths, bins, forecastPath };
+  }, []);
 
   return (
-    <motion.svg viewBox="0 0 640 240" fill="none" className="h-full w-full" variants={container} initial={rm ? "visible" : "hidden"} animate="visible">
-      <defs>
-        <radialGradient id="lr-rg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(124,58,237,0.14)" />
-          <stop offset="100%" stopColor="rgba(124,58,237,0)" />
-        </radialGradient>
-      </defs>
-      {Array.from({ length: 15 }).map((_, i) =>
-        Array.from({ length: 6 }).map((_, j) => (
-          <circle key={`d-${i}-${j}`} cx={40 + i * 40} cy={20 + j * 40} r="0.8" fill="rgba(31,29,26,0.06)" />
-        ))
+    <motion.svg
+      viewBox="0 0 640 240"
+      fill="none"
+      className="h-full w-full"
+      initial={rm ? "visible" : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true }}
+      aria-hidden="true"
+    >
+      <text x="92" y="16" textAnchor="middle" fill={`${INK}0.28)`} fontSize="8" fontFamily="ui-monospace,monospace">
+        TONIGHT
+      </text>
+      <text x="530" y="16" textAnchor="middle" fill={`${INK}0.28)`} fontSize="8" fontFamily="ui-monospace,monospace">
+        TOMORROW
+      </text>
+
+      {/* Candidate scenarios */}
+      {paths.map((d, i) => (
+        <motion.path
+          key={i}
+          d={d}
+          stroke={ACCENT}
+          strokeWidth="0.9"
+          fill="none"
+          strokeOpacity="0.16"
+          variants={{
+            hidden: { pathLength: 0, opacity: 0 },
+            visible: {
+              pathLength: 1,
+              opacity: 1,
+              transition: { duration: 0.9, delay: (i % 12) * 0.045, ease: [0.16, 1, 0.3, 1] as const },
+            },
+          }}
+        />
+      ))}
+
+      {/* The selected forecast */}
+      <motion.path
+        d={forecastPath}
+        stroke={ACCENT}
+        strokeWidth="2.5"
+        fill="none"
+        strokeLinecap="round"
+        variants={{
+          hidden: { pathLength: 0 },
+          visible: { pathLength: 1, transition: { duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] as const } },
+        }}
+      />
+
+      {/* Origin */}
+      <circle cx="92" cy="120" r="5" fill={ACCENT} />
+      {!rm && (
+        <circle cx="92" cy="120" r="5" fill="none" stroke={ACCENT} strokeWidth="1.5" opacity="0.5">
+          <animate attributeName="r" values="5;16;5" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="3s" repeatCount="indefinite" />
+        </circle>
       )}
-      <text x={SX} y="14" textAnchor="middle" fill="rgba(31,29,26,0.25)" fontSize="8" fontFamily="ui-monospace,monospace">DATA ISOLATED PER BUSINESS</text>
-      {sources.map((s, i) => (
-        <motion.g key={s} variants={itemV}>
-          <rect x={SX - 55} y={sCY[i] - 14} width={110} height={28} rx="6" fill="rgba(31,29,26,0.07)" stroke="rgba(31,29,26,0.22)" strokeWidth="1" />
-          <text x={SX} y={sCY[i]} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.6)" fontSize="10" fontFamily="ui-monospace,monospace">{s}</text>
-        </motion.g>
+
+      {/* Endpoint distribution */}
+      <line x1="478" y1="20" x2="478" y2="220" stroke={`${INK}0.12)`} strokeWidth="1" />
+      {bins.map((b, i) => (
+        <motion.rect
+          key={i}
+          x="482"
+          y={b.y + 1}
+          height={b.h}
+          rx="2"
+          fill={b.peak ? ACCENT : "rgba(124,58,237,0.3)"}
+          variants={{
+            hidden: { width: 0 },
+            visible: { width: b.w, transition: { duration: 0.6, delay: 0.7 + i * 0.03, ease: [0.16, 1, 0.3, 1] as const } },
+          }}
+        />
       ))}
-      {sCY.map((cy, i) => (
-        <motion.g key={`fl-${i}`} variants={lineV}>
-          <motion.line x1={SX + 55} y1={cy} x2={MX - 52} y2={MY} stroke="rgba(31,29,26,0.15)" strokeWidth="1" />
-          <motion.circle r="2" fill="#7c3aed" animate={rm ? {} : { cx: [SX + 55, MX - 52], cy: [cy, MY], opacity: [0, 0.7, 0] }} transition={{ duration: 4 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.7 }} />
-        </motion.g>
-      ))}
-      <ellipse cx={MX} cy={MY} rx="70" ry="70" fill="url(#lr-rg)" />
-      <motion.circle cx={MX} cy={MY} r="52" fill="none" stroke="rgba(31,29,26,0.08)" strokeWidth="0.5" strokeDasharray="3 5" animate={rm ? {} : { rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: `${MX}px ${MY}px` }} />
-      <motion.circle cx={MX} cy={MY} r="46" fill="rgba(124,58,237,0.05)" stroke="rgba(124,58,237,0.40)" strokeWidth="1.5" animate={rm ? {} : { opacity: [0.6, 1, 0.6] }} transition={{ duration: 3, repeat: Infinity }} />
-      <circle cx={MX} cy={MY} r="32" fill="rgba(124,58,237,0.08)" stroke="rgba(31,29,26,0.15)" strokeWidth="1" />
-      <text x={MX} y={MY - 8} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.92)" fontSize="11" fontFamily="ui-sans-serif,sans-serif" fontWeight="700">Knowledge</text>
-      <text x={MX} y={MY + 8} textAnchor="middle" dominantBaseline="middle" fill="rgba(31,29,26,0.92)" fontSize="11" fontFamily="ui-sans-serif,sans-serif" fontWeight="700">Graph</text>
-      <motion.g variants={rightV}>
-        <rect x="420" y="30" width="196" height="180" rx="8" fill="rgba(31,29,26,0.04)" stroke="rgba(31,29,26,0.15)" strokeWidth="1" />
-        <rect x="421" y="31" width="194" height="30" rx="7" fill="rgba(31,29,26,0.06)" />
-        <motion.circle cx="434" cy="46" r="3.5" fill="#7c3aed" animate={rm ? {} : { opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }} />
-        <text x="444" y="46" dominantBaseline="middle" fill="rgba(31,29,26,0.45)" fontSize="9" fontFamily="ui-monospace,monospace">LIVE · MODEL STATUS</text>
-        {bars.map((b, i) => (
-          <g key={b.label}>
-            <text x="434" y={80 + i * 48} dominantBaseline="middle" fill="rgba(31,29,26,0.4)" fontSize="9" fontFamily="ui-monospace,monospace">{b.label}</text>
-            <rect x="434" y={90 + i * 48} width="168" height="5" rx="2.5" fill="rgba(31,29,26,0.08)" />
-            <motion.rect x="434" y={90 + i * 48} height="5" rx="2.5" fill="rgba(124,58,237,0.7)" initial={{ width: 0 }} animate={{ width: (b.pct / 100) * 168 }} transition={{ duration: 1.2, delay: 0.6 + i * 0.2, ease: "easeOut" }} />
-            <text x={434 + (b.pct / 100) * 168 + 6} y={94 + i * 48} dominantBaseline="middle" fill="rgba(31,29,26,0.35)" fontSize="8" fontFamily="ui-monospace,monospace">{b.pct}%</text>
-          </g>
-        ))}
-      </motion.g>
-      <motion.line x1={MX + 52} y1={MY} x2={418} y2={MY} stroke="rgba(31,29,26,0.15)" strokeWidth="1" variants={lineV} />
+      <text x="482" y="234" fill={`${INK}0.3)`} fontSize="8" fontFamily="ui-monospace,monospace">
+        12,000 scenarios
+      </text>
     </motion.svg>
   );
 }
 
-/* ═══════════════════════ Illustration: Agents ═══════════════════════ */
+/* ═══════════════════════ Illustration: Approve ═══════════════════════ */
 
-function IllustrationAgents({ rm }: { rm: boolean }) {
+function IllustrationApprove({ rm }: { rm: boolean }) {
   const agents = [
     { label: "Ordering", status: "ACTIVE", task: "Reorder draft" },
     { label: "Pricing", status: "ACTIVE", task: "Price tests" },
     { label: "Labour", status: "QUEUED", task: "Shift plan" },
   ];
   const aCY = [50, 120, 190];
-  const LX = 400, LY = 16;
+  const LX = 396;
+  const LY = 16;
   const entries = [
     { action: "Low stock flagged", time: "05:58:02", done: true },
     { action: "Reorder approved", time: "06:00:11", done: true },
     { action: "Price test queued", time: "06:00:18", done: true },
     { action: "Daily plan in progress", time: "06:00:24", done: false },
   ];
-  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } } };
-  const leftV = { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 160, damping: 16 } } };
-  const rightV = { hidden: { opacity: 0, x: 20 }, visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 160, damping: 16, delay: 0.4 } } };
-  const lineV = { hidden: { pathLength: 0, opacity: 0 }, visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, delay: 0.3 } } };
+
+  const container = { hidden: {}, visible: { transition: { staggerChildren: 0.11, delayChildren: 0.12 } } };
+  const leftV = {
+    hidden: { opacity: 0, x: -18 },
+    visible: { opacity: 1, x: 0, transition: { type: "spring" as const, stiffness: 165, damping: 17 } },
+  };
+  const rightV = {
+    hidden: { opacity: 0, x: 18 },
+    visible: { opacity: 1, x: 0, transition: { type: "spring" as const, stiffness: 165, damping: 17, delay: 0.35 } },
+  };
 
   return (
-    <motion.svg viewBox="0 0 640 240" fill="none" className="h-full w-full" variants={container} initial={rm ? "visible" : "hidden"} animate="visible">
-      {Array.from({ length: 15 }).map((_, i) =>
-        Array.from({ length: 6 }).map((_, j) => (
-          <circle key={`d-${i}-${j}`} cx={40 + i * 40} cy={20 + j * 40} r="0.8" fill="rgba(31,29,26,0.06)" />
-        ))
-      )}
-      {agents.map((a, i) => (
-        <motion.g key={a.label} variants={leftV}>
-          <rect x="20" y={aCY[i] - 28} width="200" height={56} rx="8" fill="rgba(31,29,26,0.06)" stroke={a.status === "ACTIVE" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.10)"} strokeWidth="1" />
-          <motion.circle cx="40" cy={aCY[i] - 6} r="5" fill={a.status === "ACTIVE" ? "#7c3aed" : "rgba(31,29,26,0.2)"} animate={a.status === "ACTIVE" && !rm ? { opacity: [0.4, 1, 0.4] } : {}} transition={{ duration: 1.5, repeat: Infinity }} />
-          <text x="54" y={aCY[i] - 6} dominantBaseline="middle" fill="rgba(31,29,26,0.88)" fontSize="11.5" fontFamily="ui-sans-serif,sans-serif" fontWeight="600">{a.label}</text>
-          <rect x="170" y={aCY[i] - 16} width="40" height="16" rx="4" fill={a.status === "ACTIVE" ? "rgba(124,58,237,0.12)" : "rgba(31,29,26,0.03)"} stroke={a.status === "ACTIVE" ? "rgba(124,58,237,0.35)" : "rgba(31,29,26,0.1)"} strokeWidth="1" />
-          <text x="190" y={aCY[i] - 8} textAnchor="middle" dominantBaseline="middle" fill={a.status === "ACTIVE" ? "rgba(124,58,237,0.9)" : "rgba(31,29,26,0.25)"} fontSize="8" fontFamily="ui-monospace,monospace">{a.status}</text>
-          <text x="40" y={aCY[i] + 14} dominantBaseline="middle" fill="rgba(31,29,26,0.35)" fontSize="9" fontFamily="ui-monospace,monospace">{a.task}</text>
-        </motion.g>
-      ))}
-      {aCY.map((cy, i) => (
-        <motion.g key={`cl-${i}`} variants={lineV}>
-          <motion.line x1={220} y1={cy} x2={LX - 2} y2={LY + 105} stroke={agents[i].status === "ACTIVE" ? "rgba(124,58,237,0.25)" : "rgba(31,29,26,0.06)"} strokeWidth="1" />
-          {agents[i].status === "ACTIVE" && (
-            <motion.circle r="2" fill="#7c3aed" animate={rm ? {} : { cx: [220, LX - 2], cy: [cy, LY + 105], opacity: [0, 0.7, 0] }} transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }} />
-          )}
-        </motion.g>
-      ))}
+    <motion.svg
+      viewBox="0 0 640 240"
+      fill="none"
+      className="h-full w-full"
+      variants={container}
+      initial={rm ? "visible" : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true }}
+      aria-hidden="true"
+    >
+      {agents.map((a, i) => {
+        const on = a.status === "ACTIVE";
+        return (
+          <motion.g key={a.label} variants={leftV}>
+            <rect
+              x="18"
+              y={aCY[i] - 28}
+              width="200"
+              height="56"
+              rx="9"
+              fill={`${INK}0.05)`}
+              stroke={on ? "rgba(124,58,237,0.33)" : `${INK}0.1)`}
+              strokeWidth="1"
+            />
+            <motion.circle
+              cx="38"
+              cy={aCY[i] - 6}
+              r="5"
+              fill={on ? ACCENT : `${INK}0.2)`}
+              animate={on && !rm ? { opacity: [0.4, 1, 0.4] } : {}}
+              transition={{ duration: 1.6, repeat: Infinity }}
+            />
+            <text x="52" y={aCY[i] - 6} dominantBaseline="middle" fill={`${INK}0.88)`} fontSize="11.5" fontWeight="600">
+              {a.label}
+            </text>
+            <rect
+              x="160"
+              y={aCY[i] - 16}
+              width="48"
+              height="16"
+              rx="4"
+              fill={on ? "rgba(124,58,237,0.12)" : `${INK}0.03)`}
+              stroke={on ? "rgba(124,58,237,0.32)" : `${INK}0.1)`}
+            />
+            <text
+              x="184"
+              y={aCY[i] - 8}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={on ? "rgba(124,58,237,0.9)" : `${INK}0.28)`}
+              fontSize="7.5"
+              fontFamily="ui-monospace,monospace"
+            >
+              {a.status}
+            </text>
+            <text x="38" y={aCY[i] + 14} dominantBaseline="middle" fill={`${INK}0.35)`} fontSize="9" fontFamily="ui-monospace,monospace">
+              {a.task}
+            </text>
+          </motion.g>
+        );
+      })}
+
+      {aCY.map((cy, i) => {
+        const on = agents[i].status === "ACTIVE";
+        return (
+          <motion.g
+            key={`link-${i}`}
+            variants={{
+              hidden: { pathLength: 0, opacity: 0 },
+              visible: { pathLength: 1, opacity: 1, transition: { duration: 0.6, delay: 0.25 } },
+            }}
+          >
+            <motion.line
+              x1={218}
+              y1={cy}
+              x2={LX - 2}
+              y2={LY + 105}
+              stroke={on ? "rgba(124,58,237,0.24)" : `${INK}0.06)`}
+              strokeWidth="1"
+            />
+            {on && !rm && (
+              /* cx/cy are set explicitly as well as animated: without a starting
+                 value framer has nothing to read off the element and writes
+                 cx="undefined" on the first frame. */
+              <motion.circle
+                r="2"
+                fill={ACCENT}
+                cx={218}
+                cy={cy}
+                initial={{ cx: 218, cy, opacity: 0 }}
+                animate={{ cx: [218, LX - 2], cy: [cy, LY + 105], opacity: [0, 0.75, 0] }}
+                transition={{ duration: 3.6 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
+              />
+            )}
+          </motion.g>
+        );
+      })}
+
       <motion.g variants={rightV}>
-        <rect x={LX} y={LY} width="224" height="210" rx="8" fill="rgba(31,29,26,0.04)" stroke="rgba(31,29,26,0.18)" strokeWidth="1" />
-        <rect x={LX + 1} y={LY + 1} width="222" height="32" rx="7" fill="rgba(31,29,26,0.06)" />
-        <line x1={LX} y1={LY + 33} x2={LX + 224} y2={LY + 33} stroke="rgba(31,29,26,0.10)" strokeWidth="0.75" />
-        <motion.circle cx={LX + 16} cy={LY + 17} r="3.5" fill="#7c3aed" animate={rm ? {} : { opacity: [0.3, 0.9, 0.3] }} transition={{ duration: 1.6, repeat: Infinity }} />
-        <text x={LX + 28} y={LY + 17} dominantBaseline="middle" fill="rgba(31,29,26,0.6)" fontSize="10" fontFamily="ui-sans-serif,sans-serif" fontWeight="600">Audit Log</text>
+        <rect x={LX} y={LY} width="228" height="210" rx="9" fill={`${INK}0.035)`} stroke={`${INK}0.16)`} strokeWidth="1" />
+        <rect x={LX + 1} y={LY + 1} width="226" height="32" rx="8" fill={`${INK}0.05)`} />
+        <line x1={LX} y1={LY + 33} x2={LX + 228} y2={LY + 33} stroke={`${INK}0.1)`} strokeWidth="0.75" />
+        <motion.circle
+          cx={LX + 16}
+          cy={LY + 17}
+          r="3.5"
+          fill={ACCENT}
+          animate={rm ? {} : { opacity: [0.3, 0.95, 0.3] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        />
+        <text x={LX + 28} y={LY + 17} dominantBaseline="middle" fill={`${INK}0.6)`} fontSize="10" fontWeight="600">
+          Audit log
+        </text>
         {entries.map((e, i) => (
-          <motion.g key={e.action} initial={rm ? {} : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 + i * 0.15, duration: 0.3 }}>
-            <rect x={LX + 8} y={LY + 40 + i * 42} width="208" height="34" rx="5" fill="rgba(31,29,26,0.03)" stroke={!e.done ? "rgba(124,58,237,0.3)" : "rgba(31,29,26,0.08)"} strokeWidth="0.75" />
-            <text x={LX + 22} y={LY + 57 + i * 42} textAnchor="middle" dominantBaseline="middle" fill={e.done ? "rgba(124,58,237,0.9)" : "rgba(31,29,26,0.4)"} fontSize="11">{e.done ? "✓" : "●"}</text>
-            <text x={LX + 34} y={LY + 51 + i * 42} dominantBaseline="middle" fill="rgba(31,29,26,0.55)" fontSize="9" fontFamily="ui-monospace,monospace">{e.action}</text>
-            <text x={LX + 34} y={LY + 65 + i * 42} dominantBaseline="middle" fill="rgba(31,29,26,0.25)" fontSize="8" fontFamily="ui-monospace,monospace">{e.time}</text>
+          <motion.g
+            key={e.action}
+            initial={rm ? {} : { opacity: 0, y: 8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.75 + i * 0.14, duration: 0.35 }}
+          >
+            <rect
+              x={LX + 8}
+              y={LY + 40 + i * 42}
+              width="212"
+              height="34"
+              rx="6"
+              fill={`${INK}0.025)`}
+              stroke={!e.done ? "rgba(124,58,237,0.28)" : `${INK}0.07)`}
+              strokeWidth="0.75"
+            />
+            <text
+              x={LX + 22}
+              y={LY + 57 + i * 42}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={e.done ? "rgba(124,58,237,0.9)" : `${INK}0.38)`}
+              fontSize="11"
+            >
+              {e.done ? "✓" : "●"}
+            </text>
+            <text x={LX + 34} y={LY + 51 + i * 42} dominantBaseline="middle" fill={`${INK}0.55)`} fontSize="9" fontFamily="ui-monospace,monospace">
+              {e.action}
+            </text>
+            <text x={LX + 34} y={LY + 65 + i * 42} dominantBaseline="middle" fill={`${INK}0.25)`} fontSize="8" fontFamily="ui-monospace,monospace">
+              {e.time}
+            </text>
           </motion.g>
         ))}
       </motion.g>
@@ -221,8 +466,8 @@ function IllustrationAgents({ rm }: { rm: boolean }) {
 
 function StepIllustration({ step, reducedMotion }: { step: number; reducedMotion: RM }) {
   if (step === 0) return <IllustrationConnect rm={reducedMotion} />;
-  if (step === 1) return <IllustrationLearn rm={reducedMotion} />;
-  return <IllustrationAgents rm={reducedMotion} />;
+  if (step === 1) return <IllustrationModel rm={reducedMotion} />;
+  return <IllustrationApprove rm={reducedMotion} />;
 }
 
 /* ═══════════════════════ Workflow steps ═══════════════════════ */
@@ -296,8 +541,10 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                 <div className="flex items-center gap-3">
                   <span
                     className={cx(
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[14px] font-bold transition-all duration-300",
-                      active ? "bg-accent text-w-bg" : "bg-w-bg-secondary text-w-faint"
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[14px] font-bold transition-all duration-500 ease-out-expo",
+                      active
+                        ? "scale-105 bg-accent text-w-bg shadow-glow"
+                        : "bg-w-bg-secondary text-w-faint"
                     )}
                   >
                     {s.num}
@@ -310,10 +557,17 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                   >
                     {s.title}
                   </span>
+                  <span
+                    className={cx(
+                      "h-px flex-1 origin-left transition-all duration-500 ease-out-expo",
+                      active ? "scale-x-100 bg-accent/30" : "scale-x-0 bg-transparent"
+                    )}
+                  />
                 </div>
+
                 <h3
                   className={cx(
-                    "mt-4 text-[24px] font-semibold leading-tight tracking-tight transition-colors duration-300 sm:text-[30px]",
+                    "mt-4 text-[24px] font-semibold leading-tight tracking-tight transition-colors duration-500 sm:text-[30px]",
                     active ? "text-w-cream" : "text-w-muted"
                   )}
                 >
@@ -322,7 +576,15 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                 <p className="mt-3 max-w-md text-[15px] leading-relaxed text-w-text">{s.desc}</p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   {s.tags.map((tag) => (
-                    <span key={tag} className="rounded-full border border-w-border bg-w-bg-secondary px-3 py-1 text-[12px] text-w-muted">
+                    <span
+                      key={tag}
+                      className={cx(
+                        "rounded-full border px-3 py-1 text-[12px] transition-all duration-500",
+                        active
+                          ? "border-accent/25 bg-accent/[0.06] text-w-text"
+                          : "border-w-border bg-w-bg-secondary text-w-muted"
+                      )}
+                    >
                       {tag}
                     </span>
                   ))}
@@ -339,15 +601,15 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
         {/* Right: sticky visual (desktop) */}
         <div className="hidden lg:block">
           <div className="sticky top-28">
-            <div className="rounded-2xl border border-w-border bg-w-bg-secondary p-4">
-              <div className="aspect-[16/11] w-full overflow-hidden rounded-xl border border-w-border bg-w-card">
+            <div className="surface-raised rounded-2xl p-4">
+              <div className="bg-grid-lines aspect-[16/11] w-full overflow-hidden rounded-xl border border-w-border bg-w-card">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStep}
-                    initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                    initial={reducedMotion ? false : { opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={reducedMotion ? undefined : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
+                    exit={reducedMotion ? undefined : { opacity: 0, y: -12 }}
+                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                     className="h-full w-full"
                   >
                     <StepIllustration step={activeStep} reducedMotion={reducedMotion} />
@@ -360,8 +622,8 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
                   <span
                     key={s.num}
                     className={cx(
-                      "h-1.5 rounded-full transition-all duration-300",
-                      i === activeStep ? "w-7 bg-accent" : "w-1.5 bg-w-border-light"
+                      "h-1.5 rounded-full transition-all duration-500 ease-out-expo",
+                      i === activeStep ? "w-8 bg-accent" : "w-1.5 bg-w-border-light"
                     )}
                   />
                 ))}
@@ -374,10 +636,13 @@ export function WorkflowStepsSection({ reducedMotion }: { reducedMotion: RM }) {
   );
 }
 
-/* ═══════════════════════ Under the hood (lifecycle tabs) ═══════════════════════ */
+/* ═══════════════════════ Architecture tabs ═══════════════════════ */
 
 export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
+  const prefersReduced = usePrefersReducedMotion();
+  const rm = reducedMotion || prefersReduced;
   const [activeTab, setActiveTab] = useState(0);
+
   const tabs = [
     {
       label: "Connect",
@@ -425,35 +690,45 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
         subtitle="Three components, each designed so that automation stays accountable to the people running the business."
       />
 
-      {/* Tabs */}
-      <div className="mx-auto mt-8 flex max-w-md items-center justify-center gap-1 rounded-lg border border-w-border bg-w-bg-secondary p-1" role="tablist" aria-label="Architecture components">
-        {tabs.map((tab, i) => (
-          <button
-            key={tab.label}
-            role="tab"
-            aria-selected={i === activeTab}
-            onClick={() => setActiveTab(i)}
-            className={cx(
-              "flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-[13px] font-medium transition-all duration-200",
-              i === activeTab ? "bg-w-card text-w-cream" : "text-w-muted hover:text-w-text"
-            )}
-          >
-            <tab.icon className="h-3.5 w-3.5" />
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Tabs with a sliding indicator */}
+      <Reveal delay={0.1} className="mx-auto mt-8 flex max-w-md items-center justify-center gap-1 rounded-lg border border-w-border bg-w-bg-secondary p-1">
+        <div className="flex w-full" role="tablist" aria-label="Architecture components">
+          {tabs.map((tab, i) => (
+            <button
+              key={tab.label}
+              role="tab"
+              aria-selected={i === activeTab}
+              onClick={() => setActiveTab(i)}
+              className={cx(
+                "relative flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-[13px] font-medium transition-colors duration-300",
+                i === activeTab ? "text-w-cream" : "text-w-muted hover:text-w-text"
+              )}
+            >
+              {i === activeTab && (
+                <motion.span
+                  layoutId="lifecycle-tab"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  className="absolute inset-0 -z-10 rounded-md bg-w-card shadow-card"
+                />
+              )}
+              <tab.icon className="h-3.5 w-3.5" aria-hidden="true" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </Reveal>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
-          initial={reducedMotion ? false : { opacity: 0, y: 12 }}
+          initial={rm ? false : { opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.25 }}
+          exit={rm ? undefined : { opacity: 0, y: -14 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto mt-6 max-w-5xl"
         >
-          <div className="rounded-xl border border-w-border bg-w-bg-secondary">
+          <div className="surface-raised relative overflow-hidden rounded-xl">
+            <div className="hairline-accent absolute inset-x-0 top-0 h-px" />
             <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-2 lg:gap-10">
               <div>
                 <h3 className="text-[22px] font-semibold text-w-cream">{tabs[activeTab].heading}</h3>
@@ -463,9 +738,9 @@ export function LifecycleSection({ reducedMotion }: { reducedMotion: RM }) {
                 {tabs[activeTab].features.map((f, i) => (
                   <motion.li
                     key={f}
-                    initial={reducedMotion ? false : { opacity: 0, x: 8 }}
+                    initial={rm ? false : { opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
+                    transition={{ delay: i * 0.07, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className="flex items-start gap-3 text-[14px] text-w-text"
                   >
                     <span className="mt-1.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent/15">

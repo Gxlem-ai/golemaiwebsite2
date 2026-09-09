@@ -10,6 +10,8 @@ import {
   NewWaySection,
   ProofBand,
 } from "@/components/site/Platform";
+import { ForecastSection } from "@/components/site/Forecast";
+import { ApprovalsSection } from "@/components/site/Approvals";
 import { LifecycleSection, WorkflowStepsSection } from "@/components/site/HowItWorks";
 import {
   MarketSection,
@@ -41,9 +43,14 @@ export default function GolemLanding() {
         </div>
         <NewWaySection reducedMotion={reducedMotion} />
         <CapabilitiesSection reducedMotion={reducedMotion} />
+
+        {/* Show the product working */}
+        <ForecastSection reducedMotion={reducedMotion} />
+        <ApprovalsSection reducedMotion={reducedMotion} />
+
         <WorkflowStepsSection reducedMotion={reducedMotion} />
         <LifecycleSection reducedMotion={reducedMotion} />
-        <ResultsSection />
+        <ResultsSection reducedMotion={reducedMotion} />
 
         {/* Context */}
         <MarketSection reducedMotion={reducedMotion} />
