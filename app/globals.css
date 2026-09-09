@@ -7,12 +7,24 @@ html {
   height: 100%;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #fcfcfc;
   color: #1b1a18;
+}
+
+/* Keyboard focus: visible, consistent with the accent colour */
+:focus-visible {
+  outline: 2px solid rgba(124, 58, 237, 0.6);
+  outline-offset: 2px;
 }
 
 /* Marquee */
@@ -27,19 +39,10 @@ body {
   background: linear-gradient(90deg, transparent, #e7e3dc 50%, transparent);
 }
 
-/* Accent gradient text (terracotta -> lavender, Warp-style warm to cool) */
+/* Accent gradient text (terracotta -> violet) */
 .text-gradient-accent {
   background: linear-gradient(90deg, #d97757, #7c3aed);
   background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* Soft cream gradient text */
-.text-gradient-cream {
-  background: linear-gradient(180deg, #1b1a18 0%, #56544e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -55,11 +58,6 @@ body {
 .bg-grid-faint {
   background-image: radial-gradient(rgba(20, 18, 14, 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
-}
-
-/* Subtle accent glow ring on hover */
-.accent-glow {
-  box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.16), 0 18px 50px -22px rgba(124, 58, 237, 0.3);
 }
 
 /* Custom scrollbar */

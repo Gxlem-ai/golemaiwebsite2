@@ -99,13 +99,13 @@ export function SectionHeader({
   return (
     <div className={cx(centered ? "mx-auto max-w-3xl text-center" : "max-w-2xl", className)}>
       {eyebrow ? <Eyebrow className={centered ? "justify-center" : ""}>{eyebrow}</Eyebrow> : null}
-      <h2 className="mt-4 text-[32px] font-semibold leading-[1.1] tracking-tight text-w-cream sm:text-[42px]">
+      <h2 className="mt-4 text-balance text-[30px] font-semibold leading-[1.1] tracking-tight text-w-cream sm:text-[40px]">
         {title}
       </h2>
       {subtitle ? (
         <p
           className={cx(
-            "mt-4 text-[16px] leading-relaxed text-w-text",
+            "mt-4 text-[15px] leading-relaxed text-w-text sm:text-[16px]",
             centered ? "mx-auto max-w-2xl" : ""
           )}
         >
@@ -118,21 +118,30 @@ export function SectionHeader({
 
 /* ═══════════════════════ Section wrapper ═══════════════════════ */
 
+/**
+ * Sections carry a scroll margin equal to the sticky header height so that
+ * in-page navigation lands the heading below the header rather than beneath it.
+ * The optional divider sits on the section's top edge; vertical rhythm is
+ * applied to the inner wrapper so the divider never doubles the spacing.
+ */
 export function Section({
   id,
   children,
   className = "",
+  contentClassName = "",
   divider = false,
 }: {
   id?: string;
   children: React.ReactNode;
   className?: string;
+  /** Overrides for the inner wrapper, e.g. to reduce top padding when a section continues the one above it. */
+  contentClassName?: string;
   divider?: boolean;
 }) {
   return (
-    <section id={id} className={cx("relative mx-auto max-w-7xl px-6 py-24 sm:py-28", className)}>
-      {divider ? <div className="section-divider mb-20 sm:mb-24" /> : null}
-      {children}
+    <section id={id} className={cx("relative mx-auto max-w-7xl scroll-mt-16 px-6", className)}>
+      {divider ? <div className="section-divider" /> : null}
+      <div className={cx("py-14 sm:py-16", contentClassName)}>{children}</div>
     </section>
   );
 }
@@ -187,32 +196,6 @@ export function CountUp({
       {prefix}
       {display}
       {suffix}
-    </span>
-  );
-}
-
-/* ═══════════════════════ Pill ═══════════════════════ */
-
-export function Pill({
-  children,
-  active = false,
-  className = "",
-}: {
-  children: React.ReactNode;
-  active?: boolean;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cx(
-        "rounded-full border px-4 py-1.5 text-[13px] font-medium transition-all duration-500",
-        active
-          ? "border-accent/30 bg-accent/[0.06] text-w-cream shadow-[0_1px_10px_rgba(124,58,237,0.12)]"
-          : "border-w-border bg-transparent text-w-faint",
-        className
-      )}
-    >
-      {children}
     </span>
   );
 }
