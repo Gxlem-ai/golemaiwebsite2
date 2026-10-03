@@ -24,8 +24,12 @@ The site deploys on Vercel and owns the **https://golemai.pro** domain. Producti
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Optional. Canonical origin for Open Graph and canonical URLs (set to `https://golemai.pro` in production). When unset, the Vercel production domain is used automatically. |
+| `SMTP_PASS` | Password of the mailbox that sends demo requests to `contact@golemai.pro`. Setting it turns on email delivery. Keep it a Vercel secret. |
+| `SMTP_USER` | Optional. SMTP login. Defaults to `contact@golemai.pro`. |
+| `SMTP_HOST` | Optional. Defaults to `smtp.purelymail.com`. |
+| `SMTP_PORT` | Optional. Defaults to `465` (implicit TLS). |
 | `DEMO_REQUEST_WEBHOOK_URL` | HTTPS endpoint that receives each demo request as a JSON `POST` (CRM intake, Zapier/Make hook, Slack incoming webhook, etc.). |
-| `CONTROLLED_RETAIL_ORIGIN` | Optional, read at build time. Vercel URL of the `golem-intelligence` project. Defaults to `https://golem-intelligence-wheat.vercel.app`. |
+| `CANNABIS_ORIGIN` | Optional (the old name `CONTROLLED_RETAIL_ORIGIN` still works), read at build time. Vercel URL of the `golem-intelligence` project. Defaults to `https://golem-intelligence-wheat.vercel.app`. |
 | `HARD_QUESTIONS_ORIGIN` | Optional, read at build time. Vercel URL of the `golem-hq` project. Defaults to `https://golem-hq.vercel.app`. |
 
 ### Sibling sites served under golemai.pro paths
@@ -34,14 +38,14 @@ A Vercel domain attaches to a whole project, so other projects are served under 
 
 | Path | Project | Notes |
 | --- | --- | --- |
-| `/controlled-retail` | `Gxlem-ai/golem-intelligence` | Built with `basePath: "/controlled-retail"`, so its pages and `/_next` assets are proxied with the prefix intact. |
+| `/cannabis` | `Gxlem-ai/golem-intelligence` (old `/controlled-retail` URLs redirect here) | Built with `basePath: "/cannabis"`, so its pages and `/_next` assets are proxied with the prefix intact. |
 | `/hard-questions` | `Gxlem-ai/golem-hq` | Single self-contained page; no basePath needed. |
 
 Rewrites are evaluated at build time, so changing either `*_ORIGIN` variable needs a redeploy. The target project must not have Vercel Deployment Protection enabled on production, or the proxied requests get a 401.
 
 ## Demo request form
 
-The form in the contact section posts to `app/api/demo/route.ts`, which validates the submission and forwards it to `DEMO_REQUEST_WEBHOOK_URL`. Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When the variable is not set, submissions are written to the server log and the form shows the visitor a prefilled email to `contact@golemai.pro` instead (the address lives in `lib/contact.ts`), so no enquiry is lost.
+The form in the contact section posts to `app/api/demo/route.ts`, which validates the submission, emails it to `contact@golemai.pro` over SMTP when `SMTP_PASS` is set, and also forwards it to `DEMO_REQUEST_WEBHOOK_URL` when that is set. Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When neither channel is configured, submissions are written to the server log and the form shows the visitor a prefilled email to `contact@golemai.pro` instead (the address lives in `lib/contact.ts`), so no enquiry is lost.
 
 ## Structure
 
