@@ -9,25 +9,35 @@
  *
  * Override either origin with an env var in Vercel if a project's URL changes.
  */
-const CONTROLLED_RETAIL_ORIGIN =
-  process.env.CONTROLLED_RETAIL_ORIGIN ?? "https://golem-intelligence-wheat.vercel.app";
+const CANNABIS_ORIGIN =
+  process.env.CANNABIS_ORIGIN ??
+  process.env.CONTROLLED_RETAIL_ORIGIN ?? // legacy name, still honoured
+  "https://golem-intelligence-wheat.vercel.app";
 const HARD_QUESTIONS_ORIGIN =
   process.env.HARD_QUESTIONS_ORIGIN ?? "https://golem-hq.vercel.app";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The cannabis site used to live at /controlled-retail. Keep old links alive.
+  async redirects() {
+    return [
+      { source: "/controlled-retail", destination: "/cannabis", permanent: true },
+      { source: "/controlled-retail/:path*", destination: "/cannabis/:path*", permanent: true },
+    ];
+  },
+
   async rewrites() {
     return [
       // Gxlem-ai/golem-intelligence — the cannabis-retail product site. It is
-      // built with `basePath: "/controlled-retail"`, so the full path is passed
+      // built with `basePath: "/cannabis"`, so the full path is passed
       // through: its pages and /_next assets all live under that prefix.
       {
-        source: "/controlled-retail",
-        destination: `${CONTROLLED_RETAIL_ORIGIN}/controlled-retail`,
+        source: "/cannabis",
+        destination: `${CANNABIS_ORIGIN}/cannabis`,
       },
       {
-        source: "/controlled-retail/:path*",
-        destination: `${CONTROLLED_RETAIL_ORIGIN}/controlled-retail/:path*`,
+        source: "/cannabis/:path*",
+        destination: `${CANNABIS_ORIGIN}/cannabis/:path*`,
       },
 
       // Gxlem-ai/golem-hq — a single self-contained index.html whose assets are

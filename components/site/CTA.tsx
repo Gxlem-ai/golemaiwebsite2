@@ -12,6 +12,7 @@ import {
   usePrefersReducedMotion,
 } from "@/components/site/primitives";
 import { NAV_ITEMS } from "@/components/site/Nav";
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
 /* ═══════════════════════ Demo request form ═══════════════════════ */
 
@@ -20,6 +21,7 @@ type Status = "idle" | "loading" | "success" | "error";
 function DemoForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [delivered, setDelivered] = useState(true);
   const [values, setValues] = useState({ name: "", email: "", company: "", pos: "", website: "" });
   const reduced = usePrefersReducedMotion();
 
@@ -38,6 +40,8 @@ function DemoForm() {
         const data = (await res.json().catch(() => null)) as { error?: string } | null;
         throw new Error(data?.error ?? "The request could not be submitted.");
       }
+      const data = (await res.json().catch(() => null)) as { delivered?: boolean } | null;
+      setDelivered(data?.delivered !== false);
       setStatus("success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "The request could not be submitted.");
@@ -54,6 +58,39 @@ function DemoForm() {
   const inputClass =
     "mt-1 w-full rounded-lg border border-w-border bg-w-bg px-3.5 py-2.5 text-[14px] text-w-cream outline-none transition-all duration-300 placeholder:text-w-dim focus:border-accent/60 focus:ring-2 focus:ring-accent/15";
   const labelClass = "text-[12px] font-medium text-w-muted";
+
+  if (status === "success" && !delivered) {
+    const subject = encodeURIComponent("Demo request");
+    const body = encodeURIComponent(
+      [
+        "Hello GOLEM AI team,",
+        "",
+        "I would like to request a demo.",
+        "",
+        `Name: ${values.name}`,
+        `Email: ${values.email}`,
+        `Company: ${values.company}`,
+        values.pos ? `Point of sale: ${values.pos}` : "",
+      ]
+        .filter((line, i, all) => line !== "" || all[i - 1] !== "")
+        .join("\n")
+    );
+    return (
+      <div className="mt-5 rounded-lg border border-accent/25 bg-accent/[0.06] p-5" role="status">
+        <div className="text-[14px] font-semibold text-w-cream">One last step</div>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-w-text">
+          Send your details to {CONTACT_EMAIL} and we will be in touch within one working day.
+        </p>
+        <a
+          href={`${CONTACT_MAILTO}?subject=${subject}&body=${body}`}
+          className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-w-cream underline underline-offset-2"
+        >
+          Email {CONTACT_EMAIL}
+          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+        </a>
+      </div>
+    );
+  }
 
   if (status === "success") {
     return (
@@ -115,7 +152,15 @@ function DemoForm() {
         {status === "loading" ? "Submitting…" : "Request a demo"}
       </ShinyButton>
       <div aria-live="polite" className="min-h-[16px]">
-        {status === "error" && <p className="text-[12px] text-red-600">{error}</p>}
+        {status === "error" && (
+          <p className="text-[12px] text-red-600">
+            {error} You can also email us directly at{" "}
+            <a href={CONTACT_MAILTO} className="underline underline-offset-2">
+              {CONTACT_EMAIL}
+            </a>
+            .
+          </p>
+        )}
       </div>
       <p className="text-[11px] leading-relaxed text-w-dim">
         By submitting this form you agree to be contacted by GOLEM AI about your request. Your details are used for no other purpose.
@@ -175,7 +220,16 @@ export function CTASection() {
             {/* Form */}
             <div className="relative rounded-xl border border-w-border bg-w-bg/80 p-5 backdrop-blur-sm sm:p-6">
               <h3 className="text-[16px] font-semibold text-w-cream">Tell us about your business</h3>
-              <p className="mt-1 text-[13px] text-w-muted">We respond within one working day.</p>
+              <p className="mt-1 text-[13px] text-w-muted">
+                We respond within one working day. Prefer email? Write to{" "}
+                <a
+                  href={CONTACT_MAILTO}
+                  className="text-w-cream underline decoration-w-border underline-offset-2 transition-colors hover:decoration-accent"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+                .
+              </p>
               <DemoForm />
             </div>
           </div>
@@ -222,13 +276,21 @@ export function Footer() {
           <p className="text-[12px] text-w-faint">
             © {new Date().getFullYear()} GOLEM AI. All rights reserved.
           </p>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-1.5 text-[12px] text-w-muted transition-colors hover:text-w-cream"
-          >
-            Request a demo
-            <ArrowRight className="h-3 w-3" aria-hidden="true" />
-          </a>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <a
+              href={CONTACT_MAILTO}
+              className="text-[12px] text-w-muted transition-colors hover:text-w-cream"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-1.5 text-[12px] text-w-muted transition-colors hover:text-w-cream"
+            >
+              Request a demo
+              <ArrowRight className="h-3 w-3" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
