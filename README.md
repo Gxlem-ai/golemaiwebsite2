@@ -41,7 +41,7 @@ Rewrites are evaluated at build time, so changing either `*_ORIGIN` variable nee
 
 ## Demo request form
 
-The form in the contact section posts to `app/api/demo/route.ts`, which validates the submission and forwards it to `DEMO_REQUEST_WEBHOOK_URL`. Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When the variable is not set, submissions are accepted and written to the server log rather than forwarded.
+The form in the contact section posts to `app/api/demo/route.ts`, which validates the submission and forwards it to `DEMO_REQUEST_WEBHOOK_URL`. Each payload has the shape `{ source, submittedAt, name, email, company, pos }`. When the variable is not set, submissions are written to the server log and the form shows the visitor a prefilled email to `contact@golemai.pro` instead (the address lives in `lib/contact.ts`), so no enquiry is lost.
 
 ## Structure
 

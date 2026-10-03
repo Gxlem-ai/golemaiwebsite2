@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 /**
  * Demo request endpoint.
@@ -6,8 +7,9 @@ import { NextResponse } from "next/server";
  * Validates the submission and forwards it as JSON to the URL configured in
  * DEMO_REQUEST_WEBHOOK_URL (a CRM intake endpoint, Zapier/Make hook, Slack
  * incoming webhook, or similar). When the variable is not set the request is
- * accepted and written to the server log so that no enquiry is lost while
- * the integration is being configured.
+ * logged and the response carries `delivered: false`, which tells the form to
+ * hand the visitor a prefilled email to CONTACT_EMAIL instead, so no enquiry
+ * is lost while the integration is being configured.
  */
 
 export const runtime = "nodejs";
@@ -15,6 +17,8 @@ export const dynamic = "force-dynamic";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const LIMITS = { name: 120, email: 200, company: 160, pos: 120 } as const;
+
+const FAILURE_MESSAGE = `The request could not be submitted at this time. Please try again shortly or email ${CONTACT_EMAIL}.`;
 
 type Field = keyof typeof LIMITS;
 
@@ -81,9 +85,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, delivered: true });
   } catch (err) {
     console.error("[demo] Failed to forward demo request:", err);
-    return NextResponse.json(
-      { error: "The request could not be submitted at this time. Please try again shortly." },
-      { status: 502 }
-    );
+    return NextResponse.json({ error: FAILURE_MESSAGE }, { status: 502 });
   }
 }
