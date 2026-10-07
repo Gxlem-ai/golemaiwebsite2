@@ -352,7 +352,7 @@ export function HeroSection({ reducedMotion, scrollTo }: { reducedMotion: RM; sc
         >
           <span className="group inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/[0.07] px-3.5 py-1.5 text-[12px] font-medium text-w-cream backdrop-blur-sm">
             <LiveDot />
-            <span className="sm:hidden">Agentic operations platform</span>
+            <span className="sm:hidden">Agentic Ops platform</span>
             <span className="hidden sm:inline">
               Agentic operations platform · Human-approved by design
             </span>
