@@ -36,7 +36,7 @@ export function AboutHero() {
                   {hero.eyebrow}
                 </Eyebrow>
               </motion.div>
-              <h1 className="mt-8 max-w-[640px] text-balance text-hero sm:mt-10">
+              <h1 className="mt-8 max-w-[640px] text-pretty text-hero sm:mt-10">
                 <motion.span variants={rise} className="block text-white/50">
                   {hero.headlineMuted}
                 </motion.span>{" "}
