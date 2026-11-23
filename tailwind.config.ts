@@ -27,7 +27,6 @@ const config: Config = {
           "sans-serif",
         ],
         mono: ["var(--font-plex-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
-        hebrew: ["var(--font-hebrew)", "Times New Roman", "serif"],
       },
       colors: {
         /* Text */
