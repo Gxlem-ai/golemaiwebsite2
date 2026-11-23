@@ -16,7 +16,7 @@ import { ANNOUNCEMENT, NAV, PRIMARY_CTA } from "@/content/site";
 /** Slim dark bar above the navigation. It scrolls away with the page. */
 export function AnnouncementBar() {
   return (
-    <div className="on-dark bg-band text-white">
+    <div role="region" aria-label="Announcement" className="on-dark bg-band text-white">
       <Container className="flex h-[52px] items-center justify-center gap-3 sm:gap-4">
         <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent/25 py-1 pl-2.5 pr-3 text-[13px] font-medium leading-none text-accent-lav">
           <span aria-hidden="true" className="h-[5px] w-[5px] rounded-full bg-accent-lav" />

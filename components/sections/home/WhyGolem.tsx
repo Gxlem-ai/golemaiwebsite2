@@ -53,7 +53,7 @@ export function WhyGolem() {
         </Reveal>
       </div>
 
-      <p className="mt-5 text-center text-[12px] text-faint">{why.footnote}</p>
+      <p className="mt-5 text-center text-[12px] text-muted">{why.footnote}</p>
     </Section>
   );
 }

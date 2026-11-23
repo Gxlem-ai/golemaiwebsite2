@@ -33,7 +33,7 @@ function RangeMeter({ metric }: { metric: Metric }) {
           transition={{ duration: 0.9, ease: EASE }}
         />
       </div>
-      <p className="mt-2 text-[11px] leading-none text-faint">Scale {metric.scaleNote}</p>
+      <p className="mt-2 text-[11px] leading-none text-muted">Scale {metric.scaleNote}</p>
     </div>
   );
 }
@@ -60,7 +60,7 @@ export function Outcomes() {
         ))}
       </Reveal>
 
-      <p className="mt-6 text-[12px] text-faint">{outcomes.footnote}</p>
+      <p className="mt-6 text-[12px] text-muted">{outcomes.footnote}</p>
     </Section>
   );
 }

@@ -16,7 +16,9 @@ export function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
   if (instance) {
-    instance.scrollTo(el, { offset: -HEADER_OFFSET, duration: 1.1 });
+    // Lenis subtracts the page's scroll-padding-top itself, which is what
+    // keeps the target clear of the header; no further offset is needed.
+    instance.scrollTo(el, { duration: 1.1 });
     return;
   }
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -39,7 +41,7 @@ export function SmoothScroll() {
       smoothWheel: true,
       syncTouch: false,
       autoRaf: true,
-      anchors: { offset: -HEADER_OFFSET },
+      anchors: true,
       stopInertiaOnNavigate: true,
     });
     instance = lenis;
@@ -57,7 +59,7 @@ export function SmoothScroll() {
       // Wait a frame so the new page has laid out before measuring the target.
       const id = requestAnimationFrame(() => {
         const el = document.getElementById(hash);
-        if (el) instance?.scrollTo(el, { offset: -HEADER_OFFSET, immediate: true, force: true });
+        if (el) instance?.scrollTo(el, { immediate: true, force: true });
       });
       return () => cancelAnimationFrame(id);
     }

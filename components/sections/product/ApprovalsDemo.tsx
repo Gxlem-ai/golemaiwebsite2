@@ -100,7 +100,7 @@ const QueueCard = React.forwardRef<
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-faint">
+            <span className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted">
               {item.agent} agent
             </span>
             <span className="rounded-full bg-accent-wash px-2 py-0.5 text-[10px] font-medium text-accent-ink">
@@ -156,7 +156,7 @@ const QueueCard = React.forwardRef<
               <span className="text-[20px] font-medium tabular-nums tracking-[-0.02em] text-ink">
                 £{impact.toLocaleString("en-GB")}
               </span>
-              <span className="text-[12px] text-faint">{item.impactLabel}</span>
+              <span className="text-[12px] text-muted">{item.impactLabel}</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export function ApprovalsDemo() {
 
             {/* Progress meter: fill and track are steps of the same ramp */}
             <div className="mt-5">
-              <div className="flex items-center justify-between text-[11px] text-faint">
+              <div className="flex items-center justify-between text-[11px] text-muted">
                 <span>Reviewed</span>
                 <span className="tabular-nums">
                   {reviewed} of {INITIAL.length}
@@ -340,7 +340,7 @@ export function ApprovalsDemo() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-[12.5px] leading-snug text-copy">Forecast written · Fri 22:14</p>
-                  <p className="font-mono text-[11px] text-faint">22:14:07</p>
+                  <p className="font-mono text-[11px] text-muted">22:14:07</p>
                 </div>
               </li>
 
@@ -360,16 +360,16 @@ export function ApprovalsDemo() {
                     <div className="min-w-0">
                       <p className="text-[12.5px] leading-snug text-copy">
                         {entry.label}
-                        {entry.amended && <span className="text-faint"> (amended)</span>}
+                        {entry.amended && <span className="text-muted"> (amended)</span>}
                       </p>
-                      <p className="font-mono text-[11px] text-faint">{entry.time}</p>
+                      <p className="font-mono text-[11px] text-muted">{entry.time}</p>
                     </div>
                   </motion.li>
                 ))}
               </AnimatePresence>
 
               {log.length === 0 && (
-                <li className="pt-1 text-[12.5px] leading-relaxed text-faint">
+                <li className="pt-1 text-[12.5px] leading-relaxed text-muted">
                   Approve a recommendation to write the next entry.
                 </li>
               )}

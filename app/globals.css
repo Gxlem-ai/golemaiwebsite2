@@ -322,8 +322,8 @@ html.lenis body {
   --series-1: #7c3aed;
   --series-2: #c75f3d;
   --axis: #dad5cc;
-  --text-secondary: #6f6c66;
-  --text-muted: #928e86;
+  --text-secondary: #56544e;
+  --text-muted: #6f6c66;
 }
 
 .viz-line {

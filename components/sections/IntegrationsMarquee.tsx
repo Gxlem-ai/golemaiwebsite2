@@ -24,7 +24,7 @@ export function IntegrationsMarquee({ eyebrow = INTEGRATIONS.eyebrow }: { eyebro
           <Marquee
             items={names}
             gapClassName="gap-14 sm:gap-16"
-            itemClassName="text-[21px] font-semibold tracking-[-0.035em] text-faint sm:text-[23px]"
+            itemClassName="text-[24px] font-semibold tracking-[-0.035em] text-faint"
           />
         </div>
       </Container>

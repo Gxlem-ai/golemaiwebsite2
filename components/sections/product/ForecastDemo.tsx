@@ -419,7 +419,7 @@ function ForecastTable({ active }: { active: Set<SignalKey> }) {
               <th
                 key={h}
                 scope="col"
-                className="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider text-faint"
+                className="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider text-muted"
               >
                 {h}
               </th>
@@ -479,7 +479,7 @@ export function ForecastDemo() {
           {/* Controls in a single row above the chart */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 font-mono text-label uppercase text-faint">Signals</span>
+              <span className="mr-1 font-mono text-label uppercase text-muted">Signals</span>
               {SIGNALS.map((s) => {
                 const on = active.has(s.key);
                 const Icon = ICONS[s.key];
@@ -492,7 +492,7 @@ export function ForecastDemo() {
                     title={s.note}
                     className={cx(
                       "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-300",
-                      on ? "border-accent/35 bg-accent-wash text-ink" : "border-line bg-white text-faint hover:border-line-strong hover:text-muted"
+                      on ? "border-accent/35 bg-accent-wash text-ink" : "border-line bg-white text-muted hover:border-line-strong hover:text-muted"
                     )}
                   >
                     <Icon className={cx("h-3.5 w-3.5 transition-colors", on ? "text-accent" : "text-dim")} aria-hidden="true" />
@@ -527,7 +527,7 @@ export function ForecastDemo() {
               />
               Baseline average
             </span>
-            <span className="ml-auto hidden text-[11px] text-faint sm:inline">Hover the chart for daily values</span>
+            <span className="ml-auto hidden text-[11px] text-muted sm:inline">Hover the chart for daily values</span>
           </div>
 
           <div className="px-3 pb-5 pt-2 sm:px-5">
@@ -558,7 +558,7 @@ export function ForecastDemo() {
           </div>
         </div>
 
-        <p className="mx-auto mt-4 max-w-2xl text-center text-[12px] text-faint">{forecastDemo.footnote}</p>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-[12px] text-muted">{forecastDemo.footnote}</p>
       </Reveal>
     </Section>
   );

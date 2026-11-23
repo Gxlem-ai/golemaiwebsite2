@@ -147,7 +147,7 @@ const PILL = {
   ok: "bg-ok-wash text-ok-deep",
   flag: "bg-terra-wash text-terra-deep",
   accent: "bg-accent-wash text-accent-ink",
-  neutral: "bg-paper-sunk text-muted",
+  neutral: "bg-paper-sunk text-copy",
   solid: "bg-accent text-white",
   ink: "bg-ink text-white",
 } as const;

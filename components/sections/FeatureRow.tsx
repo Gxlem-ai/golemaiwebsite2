@@ -33,7 +33,7 @@ export function FeatureRow({
       )}
     >
       <Reveal className={cx("max-w-[440px]", flip ? "lg:order-2" : "lg:pl-[72px]")}>
-        <h3 className="text-balance text-h3 text-ink">{title}</h3>
+        <h2 className="text-balance text-h3 text-ink">{title}</h2>
         <p className="mt-5 text-pretty text-para text-muted">{body}</p>
         {children ? <div className="mt-6">{children}</div> : null}
       </Reveal>
