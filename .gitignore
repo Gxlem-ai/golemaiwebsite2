@@ -22,3 +22,7 @@ yarn-error.log*
 
 # typescript build info
 /tsconfig.tsbuildinfo
+
+# Switzer is fetched from Fontshare at build time (see scripts/fetch-fonts.mjs).
+# Its licence allows self-hosting but not redistribution through a repository.
+/public/fonts/Switzer-*.woff2

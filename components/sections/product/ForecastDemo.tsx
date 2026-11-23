@@ -3,48 +3,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { animate, motion, AnimatePresence, useInView } from "framer-motion";
 import { CalendarDays, CloudSun, Table2, Tag } from "lucide-react";
-import {
-  Reveal,
-  Section,
-  SectionHeader,
-  cx,
-  usePrefersReducedMotion,
-  type RM,
-} from "@/components/site/primitives";
+import { Eyebrow, Section } from "@/components/ui/Layout";
+import { Reveal } from "@/components/ui/Reveal";
+import { cx } from "@/components/ui/core";
+import { usePrefersReducedMotion } from "@/components/ui/hooks";
+import { BASELINE, DAYS, SIGNALS, type SignalKey } from "@/content/demo";
+import { PRODUCT } from "@/content/product";
 
 /* ═══════════════════════ Data ═══════════════════════ */
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-/** A naive week-on-week average, which is what most operators actually order against. */
-const BASELINE = [420, 435, 430, 455, 520, 610, 540];
-
-/** Each signal's contribution to the forecast, in covers. */
-const SIGNALS = [
-  {
-    key: "weather",
-    label: "Weather",
-    icon: CloudSun,
-    note: "Clear and 4°C above seasonal from Friday",
-    delta: [5, 8, 6, 10, 35, 78, 62],
-  },
-  {
-    key: "events",
-    label: "Local events",
-    icon: CalendarDays,
-    note: "Saturday street market, 11:00–16:00",
-    delta: [0, 0, 0, 0, 12, 96, 20],
-  },
-  {
-    key: "promotions",
-    label: "Promotions",
-    icon: Tag,
-    note: "Midweek price test on three lines",
-    delta: [0, 0, 44, 30, 10, 0, 0],
-  },
-] as const;
-
-type SignalKey = (typeof SIGNALS)[number]["key"];
+/* The week, the baseline and the three signals come from content/demo.ts, so
+   this chart agrees with every other illustration on the site. */
+const ICONS = { weather: CloudSun, events: CalendarDays, promotions: Tag } as const;
 
 const Y_MAX = 900;
 const TICKS = [0, 200, 400, 600, 800];
@@ -110,7 +80,7 @@ function useCompact() {
  * overshoots between points, which would draw demand the forecast never
  * predicted; the monotone form cannot invent peaks that are not in the data.
  */
-function monotonePath(values: number[], g: Geo): string {
+function monotonePath(values: readonly number[], g: Geo): string {
   const pts = values.map((v, i) => ({ x: xAt(i, g), y: yAt(v, g) }));
   const n = pts.length;
   if (n < 2) return "";
@@ -147,7 +117,7 @@ function monotonePath(values: number[], g: Geo): string {
 }
 
 /** Closed band between an upper and lower series, used for the confidence wash. */
-function bandPath(upper: number[], lower: number[], g: Geo): string {
+function bandPath(upper: readonly number[], lower: readonly number[], g: Geo): string {
   const up = monotonePath(upper, g);
   const down = lower
     .map((v, i) => ({ x: xAt(i, g), y: yAt(v, g) }))
@@ -162,8 +132,8 @@ function bandPath(upper: number[], lower: number[], g: Geo): string {
  * line morphs rather than jumping when a signal is toggled.
  */
 function useTweenedSeries(target: number[], reduced: boolean) {
-  const [shown, setShown] = useState(target);
-  const shownRef = useRef(target);
+  const [shown, setShown] = useState<number[]>(target);
+  const shownRef = useRef<number[]>(target);
   shownRef.current = shown;
 
   useEffect(() => {
@@ -185,7 +155,7 @@ function useTweenedSeries(target: number[], reduced: boolean) {
 
 /* ═══════════════════════ Chart ═══════════════════════ */
 
-function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; reducedMotion: RM }) {
+function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; reducedMotion: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [hover, setHover] = useState<number | null>(null);
@@ -195,7 +165,7 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
   const target = useMemo(
     () =>
       BASELINE.map((base, i) => {
-        let v = base;
+        let v: number = base;
         for (const s of SIGNALS) if (active.has(s.key)) v += s.delta[i];
         return v;
       }),
@@ -297,7 +267,7 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {/* GOLEM AI series */}
+        {/* GOLEM series */}
         <motion.path
           d={monotonePath(golem, g)}
           className="viz-line"
@@ -325,7 +295,7 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
                 fontWeight="600"
                 fill="var(--text-secondary)"
               >
-                GOLEM AI
+                GOLEM
               </text>
             </g>
             <g>
@@ -396,29 +366,29 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="pointer-events-none absolute z-10 min-w-[150px] -translate-x-1/2 -translate-y-full rounded-lg border border-w-border bg-w-card p-2.5 shadow-lift"
+            className="pointer-events-none absolute z-10 min-w-[150px] -translate-x-1/2 -translate-y-full rounded-lg border border-line bg-white p-2.5 shadow-lift"
             style={{
               left: `${(xAt(hover, g) / g.vw) * 100}%`,
               top: `${(Math.min(yAt(golem[hover], g), yAt(BASELINE[hover], g)) / g.vh) * 100 - 3}%`,
             }}
           >
-            <div className="text-[11px] font-semibold text-w-cream">{DAYS[hover]}</div>
+            <div className="text-[11px] font-semibold text-ink">{DAYS[hover]}</div>
             <div className="mt-1.5 space-y-1">
               <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-1.5 text-[11px] text-w-muted">
+                <span className="flex items-center gap-1.5 text-[11px] text-muted">
                   <span className="h-1.5 w-3 rounded-full bg-series-1" />
-                  GOLEM AI
+                  GOLEM
                 </span>
-                <span className="text-[11px] font-semibold tabular-nums text-w-cream">
+                <span className="text-[11px] font-semibold tabular-nums text-ink">
                   {Math.round(golem[hover]).toLocaleString("en-GB")}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-1.5 text-[11px] text-w-muted">
+                <span className="flex items-center gap-1.5 text-[11px] text-muted">
                   <span className="h-1.5 w-3 rounded-full bg-series-2" />
                   Baseline
                 </span>
-                <span className="text-[11px] font-semibold tabular-nums text-w-cream">
+                <span className="text-[11px] font-semibold tabular-nums text-ink">
                   {BASELINE[hover].toLocaleString("en-GB")}
                 </span>
               </div>
@@ -434,7 +404,7 @@ function ForecastChart({ active, reducedMotion }: { active: Set<SignalKey>; redu
 
 function ForecastTable({ active }: { active: Set<SignalKey> }) {
   const rows = DAYS.map((d, i) => {
-    let v = BASELINE[i];
+    let v: number = BASELINE[i];
     for (const s of SIGNALS) if (active.has(s.key)) v += s.delta[i];
     return { day: d, baseline: BASELINE[i], golem: Math.round(v) };
   });
@@ -442,14 +412,14 @@ function ForecastTable({ active }: { active: Set<SignalKey> }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[420px] border-collapse text-left">
-        <caption className="sr-only">Forecast covers per day, baseline against GOLEM AI</caption>
+        <caption className="sr-only">Forecast covers per day, baseline against the GOLEM forecast</caption>
         <thead>
-          <tr className="border-b border-w-border">
-            {["Day", "Baseline", "GOLEM AI", "Difference"].map((h) => (
+          <tr className="border-b border-line">
+            {["Day", "Baseline", "GOLEM", "Difference"].map((h) => (
               <th
                 key={h}
                 scope="col"
-                className="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider text-w-faint"
+                className="py-2 pr-4 text-[11px] font-semibold uppercase tracking-wider text-muted"
               >
                 {h}
               </th>
@@ -458,17 +428,17 @@ function ForecastTable({ active }: { active: Set<SignalKey> }) {
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.day} className="border-b border-w-border/60">
-              <th scope="row" className="py-2 pr-4 text-[13px] font-medium text-w-cream">
+            <tr key={r.day} className="border-b border-line/60">
+              <th scope="row" className="py-2 pr-4 text-[13px] font-medium text-ink">
                 {r.day}
               </th>
-              <td className="py-2 pr-4 text-[13px] tabular-nums text-w-text">
+              <td className="py-2 pr-4 text-[13px] tabular-nums text-copy">
                 {r.baseline.toLocaleString("en-GB")}
               </td>
-              <td className="py-2 pr-4 text-[13px] font-semibold tabular-nums text-w-cream">
+              <td className="py-2 pr-4 text-[13px] font-semibold tabular-nums text-ink">
                 {r.golem.toLocaleString("en-GB")}
               </td>
-              <td className="py-2 pr-4 text-[13px] tabular-nums text-w-text">
+              <td className="py-2 pr-4 text-[13px] tabular-nums text-copy">
                 {r.golem - r.baseline > 0 ? "+" : ""}
                 {(r.golem - r.baseline).toLocaleString("en-GB")}
               </td>
@@ -482,8 +452,9 @@ function ForecastTable({ active }: { active: Set<SignalKey> }) {
 
 /* ═══════════════════════ Section ═══════════════════════ */
 
-export function ForecastSection({ reducedMotion }: { reducedMotion: RM }) {
-  const prefersReduced = usePrefersReducedMotion();
+export function ForecastDemo() {
+  const reduced = usePrefersReducedMotion();
+  const { forecastDemo } = PRODUCT;
   const [active, setActive] = useState<Set<SignalKey>>(new Set(["weather", "events", "promotions"]));
   const [showTable, setShowTable] = useState(false);
 
@@ -496,59 +467,46 @@ export function ForecastSection({ reducedMotion }: { reducedMotion: RM }) {
     });
 
   return (
-    <Section id="forecast" divider>
-      <SectionHeader
-        eyebrow="Forecasting"
-        title={
-          <>
-            The signals your baseline <span className="text-gradient-accent">cannot see</span>.
-          </>
-        }
-        subtitle="A week-on-week average misses the market, the weather and your own price tests. Switch the signals on and off to see what each one contributes to next week's demand."
-      />
+    <Section id="forecast" pad="default">
+      <Reveal className="mx-auto max-w-[760px] text-center">
+        <Eyebrow kind="dot">{forecastDemo.eyebrow}</Eyebrow>
+        <h2 className="mt-5 text-balance text-h2 text-ink">{forecastDemo.h2}</h2>
+        <p className="mx-auto mt-4 max-w-[640px] text-pretty text-para text-muted">{forecastDemo.sub}</p>
+      </Reveal>
 
-      <Reveal delay={0.1} className="mx-auto mt-10 max-w-5xl">
-        <div className="surface-raised overflow-hidden rounded-2xl">
+      <Reveal delay={0.1} className="mx-auto mt-12 max-w-[1040px]">
+        <div className="overflow-hidden rounded-card border border-line bg-white shadow-window">
           {/* Controls in a single row above the chart */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-w-border px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-[11px] font-semibold uppercase tracking-wider text-w-faint">
-                Signals
-              </span>
+              <span className="mr-1 font-mono text-label uppercase text-muted">Signals</span>
               {SIGNALS.map((s) => {
                 const on = active.has(s.key);
+                const Icon = ICONS[s.key];
                 return (
                   <button
                     key={s.key}
+                    type="button"
                     onClick={() => toggle(s.key)}
                     aria-pressed={on}
                     title={s.note}
                     className={cx(
-                      "group inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-all duration-300 ease-out-expo",
-                      on
-                        ? "border-accent/35 bg-accent/10 text-w-cream shadow-[0_1px_10px_rgba(124,58,237,0.14)]"
-                        : "border-w-border bg-w-bg text-w-faint hover:border-w-border-light hover:text-w-muted"
+                      "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition-colors duration-300",
+                      on ? "border-accent/35 bg-accent-wash text-ink" : "border-line bg-white text-muted hover:border-line-strong hover:text-muted"
                     )}
                   >
-                    <s.icon
-                      className={cx("h-3.5 w-3.5 transition-colors", on ? "text-accent" : "text-w-dim")}
-                      aria-hidden="true"
-                    />
+                    <Icon className={cx("h-3.5 w-3.5 transition-colors", on ? "text-accent" : "text-dim")} aria-hidden="true" />
                     {s.label}
-                    <span
-                      className={cx(
-                        "ml-0.5 h-1.5 w-1.5 rounded-full transition-colors",
-                        on ? "bg-accent" : "bg-w-dim"
-                      )}
-                    />
+                    <span className={cx("ml-0.5 h-1.5 w-1.5 rounded-full transition-colors", on ? "bg-accent" : "bg-dim")} />
                   </button>
                 );
               })}
             </div>
 
             <button
+              type="button"
               onClick={() => setShowTable((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-w-border bg-w-bg px-2.5 py-1.5 text-[12px] text-w-muted transition-colors hover:border-w-border-light hover:text-w-cream"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 text-[12px] text-muted transition-colors hover:border-line-strong hover:text-ink"
             >
               <Table2 className="h-3.5 w-3.5" aria-hidden="true" />
               {showTable ? "Chart" : "Table"}
@@ -557,23 +515,19 @@ export function ForecastSection({ reducedMotion }: { reducedMotion: RM }) {
 
           {/* Legend: always present for two series */}
           <div className="flex flex-wrap items-center gap-4 px-5 pt-4">
-            <span className="inline-flex items-center gap-2 text-[12px] text-w-text">
+            <span className="inline-flex items-center gap-2 text-[12px] text-copy">
               <span className="h-[2px] w-5 rounded-full bg-series-1" aria-hidden="true" />
-              GOLEM AI forecast
+              GOLEM forecast
             </span>
-            <span className="inline-flex items-center gap-2 text-[12px] text-w-text">
+            <span className="inline-flex items-center gap-2 text-[12px] text-copy">
               <span
                 className="h-[2px] w-5 rounded-full"
-                style={{
-                  backgroundImage: "repeating-linear-gradient(90deg,#c75f3d 0 4px,transparent 4px 8px)",
-                }}
+                style={{ backgroundImage: "repeating-linear-gradient(90deg,#c75f3d 0 4px,transparent 4px 8px)" }}
                 aria-hidden="true"
               />
               Baseline average
             </span>
-            <span className="ml-auto hidden text-[11px] text-w-dim sm:inline">
-              Hover the chart for daily values
-            </span>
+            <span className="ml-auto hidden text-[11px] text-muted sm:inline">Hover the chart for daily values</span>
           </div>
 
           <div className="px-3 pb-5 pt-2 sm:px-5">
@@ -582,37 +536,29 @@ export function ForecastSection({ reducedMotion }: { reducedMotion: RM }) {
                 <ForecastTable active={active} />
               </div>
             ) : (
-              <ForecastChart active={active} reducedMotion={reducedMotion || prefersReduced} />
+              <ForecastChart active={active} reducedMotion={reduced} />
             )}
           </div>
 
           {/* Signal notes */}
-          <div className="grid gap-px border-t border-w-border bg-w-border sm:grid-cols-3">
+          <div className="grid gap-px border-t border-line bg-line sm:grid-cols-3">
             {SIGNALS.map((s) => {
               const on = active.has(s.key);
+              const Icon = ICONS[s.key];
               return (
-                <div
-                  key={s.key}
-                  className={cx(
-                    "bg-w-bg-secondary px-5 py-3.5 transition-opacity duration-300",
-                    on ? "opacity-100" : "opacity-45"
-                  )}
-                >
-                  <div className="flex items-center gap-1.5 text-[12px] font-semibold text-w-cream">
-                    <s.icon className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+                <div key={s.key} className={cx("bg-paper-soft px-5 py-3.5 transition-opacity duration-300", on ? "opacity-100" : "opacity-45")}>
+                  <div className="flex items-center gap-1.5 text-[12px] font-medium text-ink">
+                    <Icon className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
                     {s.label}
                   </div>
-                  <p className="mt-1 text-[12px] leading-snug text-w-muted">{s.note}</p>
+                  <p className="mt-1 text-[12px] leading-snug text-muted">{s.note}</p>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <p className="mx-auto mt-4 max-w-2xl text-center text-[12px] text-w-faint">
-          Illustrative figures for a single site. Live forecasts are built from each business&apos;s own
-          sales history and local conditions.
-        </p>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-[12px] text-muted">{forecastDemo.footnote}</p>
       </Reveal>
     </Section>
   );

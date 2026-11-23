@@ -18,9 +18,11 @@ const HARD_QUESTIONS_ORIGIN =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // The cannabis site used to live at /controlled-retail. Keep old links alive.
   async redirects() {
     return [
+      // "About Us" is the label; /about is the address. Catch the obvious guess.
+      { source: "/about-us", destination: "/about", permanent: true },
+      // A sibling site used to live at /controlled-retail. Keep old links alive.
       { source: "/controlled-retail", destination: "/cannabis", permanent: true },
       { source: "/controlled-retail/:path*", destination: "/cannabis/:path*", permanent: true },
     ];
