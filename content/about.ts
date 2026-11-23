@@ -27,11 +27,11 @@ export const ABOUT = {
       "We named the company after the legend because the same rule holds for AI at work in a business: it runs on truth, or it’s dead weight. The ledger is how we keep it awake.",
     /** A phrase inside `resolution`, shown in the accent colour. */
     resolutionAccent: "it runs on truth, or it’s dead weight.",
-    inscription: {
-      /** The Hebrew word, letter by letter in reading order (right to left). */
-      letters: ["א", "מ", "ת"],
-      alive: { word: "emet", meaning: "truth" },
-      stopped: { word: "met", meaning: "dead" },
+    /** The line under the stone, as the legend moves through its three states. */
+    states: {
+      clay: "A figure of clay",
+      alive: "emet \u00b7 truth",
+      stopped: "met \u00b7 dead",
     },
   },
 
