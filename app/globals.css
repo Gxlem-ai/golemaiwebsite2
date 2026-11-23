@@ -2,40 +2,103 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════ Type ═══════════════════════ */
+
+/* Switzer is fetched from Fontshare at build time (scripts/fetch-fonts.mjs)
+   and served from this site. If the file is ever missing, the fallback face
+   below takes over: a local grotesque with its metrics adjusted to Switzer's,
+   so nothing reflows when the real font arrives, or if it never does. */
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/Switzer-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Switzer Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 100.45%;
+  ascent-override: 97.56%;
+  descent-override: 24.89%;
+  line-gap-override: 8.96%;
+}
+
 /* ═══════════════════════ Base ═══════════════════════ */
 
+:root {
+  --ink: #1b1a18;
+  --paper: #fcfcfc;
+  --paper-soft: #f6f4ef;
+  --line: #e7e3dc;
+  --accent: #7c3aed;
+  --lav: #cbb0f7;
+  --terra: #d97757;
+  --band: #151412;
+
+  /* Height of the sticky header; anchored sections clear it. */
+  --header-h: 72px;
+}
+
 html {
-  scroll-behavior: smooth;
-  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
 body {
-  height: 100%;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #fcfcfc;
-  color: #1b1a18;
-  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  /* clip, not hidden: hidden would turn the body into a scroll container and
+     break every position: sticky on the page. */
+  overflow-x: clip;
 }
 
 ::selection {
-  background: rgba(124, 58, 237, 0.16);
-  color: #1b1a18;
+  background: rgba(124, 58, 237, 0.18);
+  color: var(--ink);
 }
 
-/* Keyboard focus: visible, consistent with the accent colour */
 :focus-visible {
-  outline: 2px solid rgba(124, 58, 237, 0.65);
-  outline-offset: 2px;
+  outline: 2px solid rgba(124, 58, 237, 0.75);
+  outline-offset: 3px;
   border-radius: 6px;
+}
+
+/* On dark bands the focus ring switches to the lavender tint for contrast. */
+.band :focus-visible,
+.on-dark :focus-visible {
+  outline-color: rgba(203, 176, 247, 0.95);
+}
+
+/* A light card sitting inside a dark band goes back to the violet ring. */
+.band .on-light :focus-visible {
+  outline-color: rgba(124, 58, 237, 0.75);
+}
+
+/* Smooth scrolling is handled by Lenis; these are its required rules. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 /* Global motion safety net. Every decorative animation collapses here, so a
    component that forgets its reduced-motion branch still behaves correctly. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
@@ -46,172 +109,216 @@ body {
   }
 }
 
-/* ═══════════════════════ Type ═══════════════════════ */
+/* ═══════════════════════ Textured surfaces ═══════════════════════ */
 
-.text-gradient-accent {
-  background: linear-gradient(100deg, #d97757, #7c3aed 55%, #9b6ef3);
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-/* ═══════════════════════ Backdrops ═══════════════════════ */
-
-/* Fine dotted grid. Pair with a mask utility to fade it out at the edges. */
-.bg-grid-faint {
-  background-image: radial-gradient(rgba(20, 18, 14, 0.055) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-/* Ruled grid used behind panels and diagrams. */
-.bg-grid-lines {
-  background-image: linear-gradient(to right, rgba(27, 26, 24, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(27, 26, 24, 0.045) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
-/* Paper grain. Keeps large flat areas from banding on wide displays. */
-.noise::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.4;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-}
-
-.mask-fade-edges {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-}
-
-.mask-radial-top {
-  -webkit-mask-image: radial-gradient(ellipse 62% 52% at 50% 0%, #000 34%, transparent 76%);
-  mask-image: radial-gradient(ellipse 62% 52% at 50% 0%, #000 34%, transparent 76%);
-}
-
-/* ═══════════════════════ Surfaces ═══════════════════════ */
-
-.surface {
-  background: #f6f4ef;
-  border: 1px solid #e7e3dc;
-}
-
-.surface-raised {
-  background: linear-gradient(180deg, #ffffff, #faf9f5);
-  border: 1px solid #e7e3dc;
-  box-shadow: 0 1px 2px rgba(27, 26, 24, 0.04), 0 8px 24px -12px rgba(27, 26, 24, 0.1);
-}
-
-.glass {
-  background: rgba(252, 252, 252, 0.72);
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
-  border: 1px solid rgba(231, 227, 220, 0.9);
-}
-
-/* Accent hairline used along the top edge of cards and panels. */
-.hairline-accent {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(217, 119, 87, 0.5),
-    rgba(124, 58, 237, 0.55),
-    transparent
-  );
-}
-
-.section-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #e7e3dc 50%, transparent);
-}
-
-/* ═══════════════════════ Spotlight cards ═══════════════════════ */
-
-/* A card that lights up under the cursor. JS writes --mx/--my as percentages;
-   with no JS (or before first hover) the layer stays fully transparent. */
-.spotlight {
+/* The illustrated cards behind product mock-ups. Each is a flat brand hue
+   with a soft wash, a cloud layer and paper grain on top, which together read
+   as pigment on paper rather than as a CSS gradient. Children sit above the
+   layers because the layers use negative z-index inside an isolated context. */
+.tx {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  background-color: var(--tx-base);
 }
 
-.spotlight::before {
+.tx::before,
+.tx::after {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
   z-index: -1;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  background: radial-gradient(
-    380px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(124, 58, 237, 0.09),
-    transparent 62%
-  );
 }
 
-.spotlight:hover::before,
-.spotlight:focus-within::before {
-  opacity: 1;
+.tx::before {
+  background:
+    radial-gradient(110% 90% at 8% 4%, var(--tx-hi) 0%, transparent 58%),
+    radial-gradient(90% 85% at 100% 100%, var(--tx-lo) 0%, transparent 62%),
+    radial-gradient(55% 50% at 72% 18%, var(--tx-mid) 0%, transparent 72%);
 }
 
-/* Border that brightens on the cursor side. */
-.spotlight-border {
+.tx::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='520'%3E%3Cfilter id='c' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .012' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 2 0 0 0 -.78'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: cover, 180px 180px;
+  opacity: var(--tx-grain, 0.5);
+  mix-blend-mode: soft-light;
+}
+
+.tx-lav {
+  --tx-base: #d8c6f6;
+  --tx-hi: #eadcfd;
+  --tx-mid: #e3d1fb;
+  --tx-lo: #b99bef;
+}
+
+.tx-clay {
+  --tx-base: #ecc4b2;
+  --tx-hi: #f8dfd3;
+  --tx-mid: #f3d2c3;
+  --tx-lo: #dc9e84;
+}
+
+/* Clay into lavender: used where one card has to carry both brand hues. */
+.tx-dusk {
+  --tx-base: #e2c4d2;
+  --tx-hi: #f3d5c6;
+  --tx-mid: #ead0d4;
+  --tx-lo: #c2aaf0;
+}
+
+.tx-cream {
+  --tx-base: #f1ede5;
+  --tx-hi: #f9f6f0;
+  --tx-mid: #f4f0e9;
+  --tx-lo: #e6dfd3;
+  --tx-grain: 0.35;
+}
+
+/* Plain cream card with a band of fine rules sweeping across it from the
+   lower left to the upper right. A window placed over the middle leaves the
+   rules showing at two opposite corners. */
+.tx-ruled {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #f6f4ef;
 }
 
-.spotlight-border::after {
+.tx-ruled::before {
   content: "";
   position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  background: radial-gradient(
-    260px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(124, 58, 237, 0.55),
-    transparent 60%
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 660 460' preserveAspectRatio='none' fill='none' stroke='%231b1a18' stroke-opacity='.1'%3E%3Cg vector-effect='non-scaling-stroke'%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 286Q300 190 680 -44'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 312Q306 214 680 -18'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 338Q312 238 680 8'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 364Q318 262 680 34'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 390Q324 286 680 60'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 416Q330 310 680 86'/%3E%3Cpath vector-effect='non-scaling-stroke' d='M-20 442Q336 334 680 112'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
-.spotlight-border:hover::after,
-.spotlight-border:focus-within::after {
-  opacity: 1;
+/* The violet stage behind the daily-plan loop: brand violet at the top
+   settling into paper at the foot, with grain. */
+.stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #7c3aed 0%, #8f57f0 22%, #b592f5 48%, #dccbfa 72%, #f6f1fe 90%, #fcfcfc 100%);
 }
 
-/* ═══════════════════════ Marquee ═══════════════════════ */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════ Dark bands ═══════════════════════ */
+
+/* Full-bleed sections in a shade of the ink. Light comes from the brand's two
+   warm hues, never from a new colour. `.band-glow-*` picks where it rises. */
+.band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--band);
+  color: #fff;
+}
+
+.band::before,
+.band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.band::before {
+  z-index: -2;
+  background: var(--band-glow, none);
+}
+
+/* Fine light grain: keeps the large dark fields from banding. */
+.band::after {
+  z-index: -1;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.band-glow-bl {
+  --band-glow:
+    radial-gradient(52% 74% at 0% 100%, rgba(217, 119, 87, 0.58) 0%, rgba(196, 98, 118, 0.3) 32%, rgba(124, 58, 237, 0.18) 58%, transparent 82%);
+}
+
+.band-glow-bc {
+  --band-glow:
+    radial-gradient(42% 36% at 50% 100%, rgba(217, 119, 87, 0.6) 0%, rgba(217, 119, 87, 0.3) 30%, rgba(170, 92, 170, 0.12) 62%, transparent 100%),
+    radial-gradient(78% 66% at 50% 108%, rgba(124, 58, 237, 0.44) 0%, rgba(124, 58, 237, 0.16) 46%, transparent 76%);
+}
+
+.band-glow-br {
+  --band-glow:
+    radial-gradient(50% 70% at 100% 100%, rgba(124, 58, 237, 0.5) 0%, rgba(150, 80, 200, 0.24) 36%, rgba(217, 119, 87, 0.1) 60%, transparent 82%);
+}
+
+.band-glow-tl {
+  --band-glow:
+    radial-gradient(46% 64% at 0% 0%, rgba(124, 58, 237, 0.42) 0%, rgba(124, 58, 237, 0.14) 44%, transparent 76%),
+    radial-gradient(40% 58% at 100% 100%, rgba(217, 119, 87, 0.38) 0%, rgba(217, 119, 87, 0.1) 46%, transparent 78%);
+}
+
+/* ═══════════════════════ Small utilities ═══════════════════════ */
+
+/* The hand-drawn rule under a single word in a heading. */
+.underline-accent {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.14em;
+  text-decoration-skip-ink: none;
+}
+
+.mask-fade-x {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+  mask-image: linear-gradient(180deg, #000 60%, transparent);
+}
 
 .marquee-track:hover .marquee-row {
   animation-play-state: paused;
 }
 
-/* ═══════════════════════ Shimmer ═══════════════════════ */
+/* Hairline between sections. */
+.rule {
+  height: 1px;
+  background: var(--line);
+}
 
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 20%,
-    rgba(124, 58, 237, 0.14) 50%,
-    transparent 80%
-  );
-  background-size: 200% 100%;
+/* Visually hidden, still read by assistive technology. */
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 /* ═══════════════════════ Charts ═══════════════════════ */
 
 /* Series roles. Text never wears these; only marks do. */
 .viz-root {
-  --surface-1: #f6f4ef;
+  --surface-1: #ffffff;
   --series-1: #7c3aed;
   --series-2: #c75f3d;
   --axis: #dad5cc;
@@ -250,7 +357,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #d8d3ca;
   border-radius: 6px;
-  border: 3px solid #fcfcfc;
+  border: 3px solid var(--paper);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #bdb9b0;

@@ -2,11 +2,13 @@
 
 Corporate website for GOLEM AI, the agentic operations platform for businesses that run on a point of sale.
 
+Three pages: the home page (`/`), Product (`/product`) and About Us (`/about`).
+
 ## Stack
 
 - Next.js 14 (App Router), React 18, TypeScript
 - Tailwind CSS 3
-- Framer Motion for motion, Lucide for icons
+- Framer Motion for motion, Lenis for smooth scrolling, Lucide for icons
 
 ## Development
 
@@ -16,6 +18,14 @@ npm run dev      # http://localhost:3000
 npm run lint
 npm run build && npm run start
 ```
+
+## Editing the wording
+
+All copy lives in `content/`, one file per page (`home.ts`, `product.ts`, `about.ts`) plus `site.ts` for the navigation, announcement bar, footer and demo band. Change a string there and the page follows; no layout code needs touching. `content/demo.ts` holds the illustrative business and figures that every product mock-up draws on, so a number changed there changes everywhere it appears.
+
+## Typeface
+
+Headings and body text are set in [Switzer](https://www.fontshare.com/fonts/switzer) (Indian Type Foundry, via Fontshare); labels use IBM Plex Mono. Switzer's licence allows self-hosting but not redistribution through a public repository, so the font file is **not committed**: `scripts/fetch-fonts.mjs` downloads it from Fontshare into `public/fonts/` before `npm run dev` and `npm run build`. If Fontshare cannot be reached the build still succeeds and the site falls back to a metric-matched system font. Run `npm run fonts` to fetch it by hand.
 
 ## Deployment
 
@@ -51,11 +61,20 @@ The form in the contact section posts to `app/api/demo/route.ts`, which validate
 
 ```
 app/
-  layout.tsx          Metadata, fonts, viewport
-  page.tsx            Renders the landing page
-  icon.svg            Favicon
-  api/demo/route.ts   Demo request endpoint
+  layout.tsx            Metadata, fonts, header, footer, smooth scrolling
+  page.tsx              Home
+  product/page.tsx      Product
+  about/page.tsx        About Us
+  api/demo/route.ts     Demo request endpoint
+  sitemap.ts, robots.ts
+content/                All wording, and the shared illustrative data
 components/
-  GolemLanding.tsx    Page composition
-  site/               Section components and shared primitives
+  ui/                   Design-system primitives (buttons, layout, mock-up parts, hooks)
+  site/                 Header, footer, demo form, smooth scrolling
+  sections/             Page sections, grouped by page
+  mocks/                Animated product mock-ups
+  brand/                Logo
+scripts/fetch-fonts.mjs Fetches Switzer at build time
 ```
+
+Design tokens (colours, type scale, shadows) are in `tailwind.config.ts`; the textured surfaces and dark bands are in `app/globals.css`.
